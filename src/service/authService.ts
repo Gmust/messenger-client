@@ -1,19 +1,11 @@
-import { JWT } from 'next-auth/jwt';
-import axios, { AxiosError } from 'axios';
+import { $unAuthHost } from '@/service/index';
 
 export const authService = {
 
-  async getUserByToken(token: JWT) {
-    try {
-      const { data } = await axios.post('http://localhost:8080/auth/user', { email: token.email });
-      console.log(data);
-      return data;
-    } catch (e) {
-      console.log('---------------------------');
-      console.log((e as AxiosError).message);
-      console.log('---------------------------');
-    }
+  async getUser(token: string) {
+    console.log(token);
+    const { data } = await $unAuthHost.post('/auth/user', { token });
+    return data;
   }
-
 
 };

@@ -2,17 +2,19 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { signIn } from 'next-auth/react';
 import { Button } from '@/components/shared/Button';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
-      await signIn('google');
+      router.replace('http://localhost:8080/auth/google/login')
     } catch (e) {
       toast.error('Something went wrong with your login.');
     } finally {
