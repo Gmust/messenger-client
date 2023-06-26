@@ -1,8 +1,8 @@
 import { authService } from '@/service/authService';
+import { notFound } from 'next/navigation';
 
-const Page = async ({ searchParams }: { searchParams: any }) => {
-  const user = await authService.getUser(searchParams.access_token);
-  console.log(user);
+const Page = async () => {
+
 
   return (
     <div>

@@ -5,16 +5,32 @@ import Image from 'next/image';
 import { Button } from '@/components/shared/Button';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 const Page = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('test3@gmail.com');
+  const [password, setPassword] = useState<string>('password');
   const router = useRouter();
 
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
-      router.replace('http://localhost:8080/auth/google/login')
+      await signIn('google');
+      // router.replace('http://localhost:8080/auth/google/login')
+    } catch (e) {
+      toast.error('Something went wrong with your login.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithCredentials = async () => {
+    setIsLoading(true);
+    try {
+      await signIn('credentials', { email, password });
+      // router.replace('http://localhost:8080/auth/google/login')
     } catch (e) {
       toast.error('Something went wrong with your login.');
     } finally {
@@ -40,6 +56,15 @@ const Page = () => {
             }
             <span>Google</span>
           </Button>
+
+          <div>
+            <input name='email' type='email' value={email} onChange={e => setEmail(e.currentTarget.value)} />
+            <input name='password' type='password' value={password}
+                   onChange={e => setPassword(e.currentTarget.value)} />
+            <Button isLoading={isLoading} type='button' onClick={loginWithCredentials}>
+              Log in
+            </Button>
+          </div>
         </div>
       </div>
     </>
