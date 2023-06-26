@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Icon, Icons } from '@/components/icons/icons';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { SignOutBtn } from '@/components/elements';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -31,7 +32,7 @@ export const metadata = {
 const Layout = async ({ children }: LayoutProps) => {
 
   const session = await getServerSession(authOptions);
-
+  console.log('session in layout', session);
 
   return (
     <div className='w-full h-screen flex'>
@@ -109,7 +110,7 @@ const Layout = async ({ children }: LayoutProps) => {
                   </span>
                 </div>
               </div>
-              {/*     <SignOutBtn className='h-full aspect-square' />*/}
+              <SignOutBtn className='h-full aspect-square' />
             </li>
           </ul>
         </nav>

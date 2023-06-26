@@ -26,7 +26,7 @@ const getGoogleCredentials = () => {
 };
 
 
-export const authOptions:AuthOptions = {
+export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   //@ts-ignore
   adapter: MongoDBAdapter(
@@ -49,7 +49,7 @@ export const authOptions:AuthOptions = {
       clientId: getGoogleCredentials().clientId,
       clientSecret: getGoogleCredentials().clientSecret,
       authorization: {
-        url: 'http://localhost:8080/auth/google/login'
+        url: 'http://localhost:8080/auth/google/login',
       }
     }),
     CredentialsProvider({
@@ -97,12 +97,10 @@ export const authOptions:AuthOptions = {
         //@ts-ignore
         session.user.image = token.image;
       }
-      console.log('session in next', session);
       return session;
     },
     redirect() {
       return '/dashboard';
     }
   },
-  debug: true
-}
+};

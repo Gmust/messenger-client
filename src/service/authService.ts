@@ -9,7 +9,7 @@ export const authService = {
 
   async loginUser({ email, password }: ILoginUser) {
     const { data } = await $unAuthHost.post('/auth/login', { email, password });
-    return data;
+    return data
   }
 
 };
