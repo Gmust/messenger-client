@@ -9,6 +9,13 @@ export const userService = {
       }
     });
     return data;
+  },
+  async addFriend({ userId, friendEmail }: AddFriend) {
+    const res = await $authHost.post('/users/add', {
+      senderId: userId,
+      receiverEmail: friendEmail
+    });
+    console.log(res);
+    return res.data;
   }
-
 };

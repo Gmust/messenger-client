@@ -1,4 +1,7 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
+import { getSession } from 'next-auth/react';
+import { authOptions } from '@/lib/auth';
 
 
 export const $unAuthHost = axios.create({
@@ -11,13 +14,14 @@ export const $authHost = axios.create({
 });
 
 
-$authHost.interceptors.request.use(
+/*$authHost.interceptors.request.use(
   (config) => {
     // @ts-ignore
-    const accessToken = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('token')) : false;
+    const test =  getServerSession()
+    console.log('in interceptor',test)
 
-    if (accessToken) {
-      if (config.headers) config.headers.token = accessToken;
+    if (test) {
+      if (config.headers) config.headers.token = test;
     }
     return config;
   },
@@ -36,11 +40,11 @@ $authHost.interceptors.response.use(
 
     return Promise.reject(error);
   }
-);
+);*/
 // End of Response interceptor
-/*
-const authInterceptors = (config: any) => {
-  config.headers.authorization = `Bearer ${localStorage.getItem('token')}`;
+const authInterceptors = async (config: any) => {
+  const session = await getSession();
+  config.headers.authorization = `Bearer ${session?.user.access_token}`;
   return config;
 };
 
@@ -49,12 +53,13 @@ $authHost.interceptors.request.use(authInterceptors);
 $authHost.interceptors.response.use((config) => {
   return config;
 }, async (error) => {
+  let session = await getSession();
 
   let refresh_token;
   let email;
   if (typeof window !== 'undefined') {
-    refresh_token = localStorage.getItem('refresh_token');
-    email = localStorage.getItem('email');
+    refresh_token = session?.user.access_token;
+    email = session?.user.email;
   }
   const originalRequest = error.config;
 
@@ -63,10 +68,9 @@ $authHost.interceptors.response.use((config) => {
   if (error.status.response === 401) {
     try {
       const response = await $unAuthHost.post('/auth/refresh', { refresh_token, email });
-      localStorage.setItem('token', response.data.access_token);
       return $authHost.request(originalRequest);
     } catch (e) {
       toast.error('Session expired! Please log in again!');
     }
   }
-});*/
+});

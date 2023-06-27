@@ -3,6 +3,8 @@ import { Icon, Icons } from '@/components/icons/icons';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { SignOutBtn } from '@/components/elements';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -32,12 +34,12 @@ export const metadata = {
 const Layout = async ({ children }: LayoutProps) => {
 
   const session = await getServerSession(authOptions);
-  console.log('session in layout', session);
+  if (!session) notFound();
 
   return (
     <div className='w-full h-screen flex'>
       <div className='md:hidden'>
-        {/*   <MobileChatLayout session={session} friends={friends} sidebarOptions={sidebarOptions}
+        {/*   <MobileChatLayout session={session} add={add} sidebarOptions={sidebarOptions}
                           unseenRequestCount={unseenRequestCount} />*/}
       </div>
       <div className='hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200
@@ -46,14 +48,14 @@ const Layout = async ({ children }: LayoutProps) => {
           <Icons.Twitter className='h-10 w-auto text-violet-600' />
         </Link>
 
-        {/*        {friends.length > 0 ? <div className='text-base font-semibold leading-6 text-gray-400'>
+        {/*        {add.length > 0 ? <div className='text-base font-semibold leading-6 text-gray-400'>
           Your chats
         </div> : null}*/}
 
         <nav className='flex flex-1 flex-col'>
           <ul role='link' className='flex flex-1 flex-col gap-y-7'>
             <li>
-              {/*        <SidebarChatList friends={friends} sessionId={session.user.id} />*/}
+              {/*        <SidebarChatList add={add} sessionId={session.user.id} />*/}
             </li>
             <li>
               <div className='text-base font-semibold leading-6 text-gray-400'>
@@ -94,11 +96,9 @@ const Layout = async ({ children }: LayoutProps) => {
               <div
                 className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
                 <div className='relative h-8 w-8 bg-gray-50'>
-                  {/*       <Image fill
-                         referrerPolicy='no-referrer'
-                         className='rounded-full'
-                         src={session?.user.image || ''}
-                         alt='Your profile picture' />*/}
+                  <Image fill referrerPolicy='no-referrer' className='rounded-full'
+                         src={`${process.env.BACKEND_IMAGE_URL!}${session.user.image}`}
+                         alt='Your profile picture' />
                 </div>
                 <span className='sr-only'>Your profile</span>
                 <div className='flex flex-col'>

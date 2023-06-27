@@ -1,5 +1,5 @@
 import { AuthOptions } from 'next-auth';
-import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from '@/lib/mongodb';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -28,7 +28,6 @@ const getGoogleCredentials = () => {
 
 export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  //@ts-ignore
   adapter: MongoDBAdapter(
     clientPromise,
     {
@@ -49,7 +48,7 @@ export const authOptions: AuthOptions = {
       clientId: getGoogleCredentials().clientId,
       clientSecret: getGoogleCredentials().clientSecret,
       authorization: {
-        url: 'http://localhost:8080/auth/google/login',
+        url: 'http://localhost:8080/auth/google/login'
       }
     }),
     CredentialsProvider({
@@ -63,9 +62,12 @@ export const authOptions: AuthOptions = {
         if (!credentials || !credentials.email || !credentials.password) {
           toast.error('Provide all credentials');
         }
-        const user = await authService.loginUser({ email: credentials?.email!, password: credentials?.password! });
-        if (user) {
-          return user.user;
+        const userData = await authService.loginUser({
+          email: credentials?.email!,
+          password: credentials?.password!
+        });
+        if (userData) {
+          return userData.user as User;
         } else {
           return null;
         }
@@ -78,29 +80,31 @@ export const authOptions: AuthOptions = {
       if (!dbResult) {
         token.id = user!.id;
       }
+
       return {
         id: dbResult.id,
         name: dbResult.name,
         email: dbResult.email,
         image: dbResult.image,
-        friends: dbResult.friends
+        friends: dbResult.friends,
+        access_token: dbResult.access_token,
+        refresh_token: dbResult.refresh_token
       };
     },
-    async session({ session, token }) {
-      if (token) {
-        //@ts-ignore
+    async session({ session, token, user }) {
+      if (token && session.user) {
         session.user.id = token.id;
-        //@ts-ignore
         session.user.name = token.name;
-        //@ts-ignore
         session.user.email = token.email;
-        //@ts-ignore
         session.user.image = token.image;
+        session.user.friends = token.friends;
+        session.user.access_token = token.access_token;
+        session.user.refresh_token = token.refresh_token;
       }
       return session;
     },
     redirect() {
       return '/dashboard';
     }
-  },
+  }
 };

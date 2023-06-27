@@ -2,23 +2,31 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Button } from '@/components/shared/Button';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { z } from 'zod';
+import { Button } from '@/components/shared/Button';
+import { loginUserValidator } from '@/lib/validations/login-user';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+
+type formData = z.infer<typeof loginUserValidator>
 
 const Page = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>('test3@gmail.com');
-  const [password, setPassword] = useState<string>('password');
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<formData>({
+    resolver: zodResolver(loginUserValidator)
+  });
+
   const router = useRouter();
 
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
       await signIn('google');
-      // router.replace('http://localhost:8080/auth/google/login')
     } catch (e) {
       toast.error('Something went wrong with your login.');
     } finally {
@@ -26,13 +34,15 @@ const Page = () => {
     }
   };
 
-  const loginWithCredentials = async () => {
+  const loginWithCredentials = async ({ email, password }: formData) => {
     setIsLoading(true);
     try {
-      await signIn('credentials', { email, password });
-      // router.replace('http://localhost:8080/auth/google/login')
+      const res = await signIn('credentials', { email, password, redirect: false });
+      if (res!.status == 401) {
+        toast.error('Invalid credentials!');
+      }
     } catch (e) {
-      toast.error('Something went wrong with your login.');
+      router.push('/dashboard');
     } finally {
       setIsLoading(false);
     }
@@ -57,13 +67,44 @@ const Page = () => {
             <span>Google</span>
           </Button>
 
-          <div>
-            <input name='email' type='email' value={email} onChange={e => setEmail(e.currentTarget.value)} />
-            <input name='password' type='password' value={password}
-                   onChange={e => setPassword(e.currentTarget.value)} />
-            <Button isLoading={isLoading} type='button' onClick={loginWithCredentials}>
-              Log in
-            </Button>
+          <div className='w-full max-w-xs'>
+            <form className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+                  onSubmit={handleSubmit(loginWithCredentials)}>
+              <div className='mb-4'>
+                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>
+                  Email
+                </label>
+                <input
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
+                   focus:outline-none focus:shadow-outline' id='email' placeholder='Email' type='email'
+                  {...register('email', {})}
+                />
+                <p className='text-sm text-red-600 mt-1'>
+                  {errors.email?.message}
+                </p>
+              </div>
+              <div className='mb-6'>
+                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='password'>
+                  Password
+                </label>
+                <input
+                  className='shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700 mb-3
+                  leading-tight focus:outline-none focus:shadow-outline' id='password'
+                  placeholder='******************' type='password' {...register('password', {})}
+                />
+                <p className='text-sm text-red-600 mt-1'>
+                  {errors.password?.message}
+                </p>
+              </div>
+              <div className='flex items-center justify-between'>
+                <Button isLoading={isLoading} type='submit'>
+                  Log in
+                </Button>
+                <a className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800' href='#'>
+                  Forgot Password?
+                </a>
+              </div>
+            </form>
           </div>
         </div>
       </div>
