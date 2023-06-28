@@ -15,5 +15,30 @@ interface User {
 
 interface AddFriend {
   userId: string,
-  friendEmail: string
+  friendEmail: string,
+  access_token: string
+}
+
+interface FriendRequests {
+  _id: string,
+  senderId: FriendRequest,
+  receiverId: FriendRequest,
+}
+
+interface FriendRequest {
+  _id: string,
+  name: string,
+  email: string,
+  image: string
+}
+
+interface GetFriendRequests {
+  userId: string,
+  access_token: string
+}
+
+interface InteractWithFriendRequest {
+  senderId: string,
+  receiverId: string,
+  access_token: string
 }

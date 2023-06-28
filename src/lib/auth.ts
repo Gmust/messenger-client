@@ -1,5 +1,5 @@
 import { AuthOptions } from 'next-auth';
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import clientPromise from '@/lib/mongodb';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -76,7 +76,7 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      const dbResult = await authService.getUserByToken(token.email!) as User;
+      const dbResult = await authService.getUserByEmail(token.email!) as User;
       if (!dbResult) {
         token.id = user!.id;
       }

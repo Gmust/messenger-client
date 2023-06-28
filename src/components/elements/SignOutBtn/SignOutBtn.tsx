@@ -2,7 +2,7 @@
 
 import { ButtonHTMLAttributes, useState } from 'react';
 import { Button } from '@/components/shared/Button';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { Loader2, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -12,8 +12,10 @@ interface SignOutBtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const SignOutBtn = ({ ...props }: SignOutBtnProps) => {
 
+  const { data: session } = useSession();
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
   const router = useRouter();
+
 
   const handleSignOut = async () => {
     setIsSigningOut(true);

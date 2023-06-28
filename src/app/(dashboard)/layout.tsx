@@ -5,6 +5,8 @@ import { authOptions } from '@/lib/auth';
 import { SignOutBtn } from '@/components/elements';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { FriendRequestsSidebarOption } from '@/components/elements/FriendRequestsSidebar/FriendRequestsSidebarOption';
+import { userService } from '@/service/userService';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -35,6 +37,13 @@ const Layout = async ({ children }: LayoutProps) => {
 
   const session = await getServerSession(authOptions);
   if (!session) notFound();
+  const { incomingReq } = await userService.getFriendRequests(
+    { userId: session!.user.id, access_token: session!.user.access_token }
+  );
+  const imageUrl = session.user.image!.startsWith('https://lh3.googleusercontent.com')
+    ? session.user.image!
+    : `${process.env.BACKEND_IMAGE_URL}${session.user.image!}`;
+
 
   return (
     <div className='w-full h-screen flex'>
@@ -48,9 +57,9 @@ const Layout = async ({ children }: LayoutProps) => {
           <Icons.Twitter className='h-10 w-auto text-violet-600' />
         </Link>
 
-        {/*        {add.length > 0 ? <div className='text-base font-semibold leading-6 text-gray-400'>
+        {session.user.friends.length > 0 ? <div className='text-base font-semibold leading-6 text-gray-400'>
           Your chats
-        </div> : null}*/}
+        </div> : null}
 
         <nav className='flex flex-1 flex-col'>
           <ul role='link' className='flex flex-1 flex-col gap-y-7'>
@@ -63,9 +72,7 @@ const Layout = async ({ children }: LayoutProps) => {
               </div>
               <ul role='list' className='-mx-2 mt-2 space-y-1'>
                 {sidebarOptions.map(item => {
-
                   const Icon = Icons[item.Icon];
-
                   return (
                     <li key={item.id}>
                       <Link href={item.href}
@@ -85,8 +92,8 @@ const Layout = async ({ children }: LayoutProps) => {
                 })}
 
                 <li>
-                  {/* <FriendRequestsSidebarOption sessionId={session?.user.id!}
-                                               initialUnseenRequestCount={unseenRequestCount} />*/}
+                  <FriendRequestsSidebarOption userId={session?.user.id!}
+                                               initialUnseenRequestsCount={incomingReq.length} />
                 </li>
               </ul>
             </li>
@@ -97,7 +104,7 @@ const Layout = async ({ children }: LayoutProps) => {
                 className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
                 <div className='relative h-8 w-8 bg-gray-50'>
                   <Image fill referrerPolicy='no-referrer' className='rounded-full'
-                         src={`${process.env.BACKEND_IMAGE_URL!}${session.user.image}`}
+                         src={imageUrl}
                          alt='Your profile picture' />
                 </div>
                 <span className='sr-only'>Your profile</span>
