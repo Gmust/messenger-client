@@ -10,6 +10,7 @@ import { Button } from '@/components/shared/Button';
 import { loginUserValidator } from '@/lib/validations/login-user';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 
 type formData = z.infer<typeof loginUserValidator>
@@ -34,15 +35,19 @@ const Page = () => {
     }
   };
 
+
   const loginWithCredentials = async ({ email, password }: formData) => {
     setIsLoading(true);
     try {
-      const res = await signIn('credentials', { email, password, redirect: false });
+      const res = await signIn('credentials',
+        { email, password, redirect: false, callbackUrl: '/dashboard' }
+      );
       if (res!.status == 401) {
         toast.error('Invalid credentials!');
       }
     } catch (e) {
-      router.push('/dashboard');
+      console.log(e);
+      toast.error('Error');
     } finally {
       setIsLoading(false);
     }
@@ -100,10 +105,19 @@ const Page = () => {
                 <Button isLoading={isLoading} type='submit'>
                   Log in
                 </Button>
-                <a className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800' href='#'>
+                <Link
+                  className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer'
+                  href='#'>
                   Forgot Password?
-                </a>
+                </Link>
               </div>
+              <p className='text-sm font-light text-gray-500 dark:text-gray-400'>
+                Already have an account?
+                <Link href='/registration'
+                      className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer ml-2'>
+                  Login
+                  here</Link>
+              </p>
             </form>
           </div>
         </div>

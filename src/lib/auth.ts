@@ -31,9 +31,10 @@ export const authOptions: AuthOptions = {
   adapter: MongoDBAdapter(
     clientPromise,
     {
-      databaseName: 'Messanger',
+      databaseName: 'Messenger',
       collections: {
-        Users: 'users'
+        Users: 'users',
+        Accounts: 'accounts'
       }
     }
   ),
@@ -46,10 +47,7 @@ export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: getGoogleCredentials().clientId,
-      clientSecret: getGoogleCredentials().clientSecret,
-      authorization: {
-        url: 'http://localhost:8080/auth/google/login'
-      }
+      clientSecret: getGoogleCredentials().clientSecret
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -75,20 +73,22 @@ export const authOptions: AuthOptions = {
     })
   ],
   callbacks: {
+// @ts-ignore
     async jwt({ token, user }) {
       const dbResult = await authService.getUserByEmail(token.email!) as User;
+
       if (!dbResult) {
         token.id = user!.id;
+        return token;
       }
-
       return {
         id: dbResult.id,
         name: dbResult.name,
         email: dbResult.email,
-        image: dbResult.image,
-        friends: dbResult.friends,
+        picture: dbResult.image,
         access_token: dbResult.access_token,
-        refresh_token: dbResult.refresh_token
+        refresh_token: dbResult.refresh_token,
+        friends: dbResult.friends
       };
     },
     async session({ session, token, user }) {
@@ -103,8 +103,22 @@ export const authOptions: AuthOptions = {
       }
       return session;
     },
+    async signIn({ credentials, user, profile, account, email }) {
+
+      const userFromDb = await authService.loginUserByGoogle(
+        {
+          email: user.email!,
+          image: user.image!,
+          name: user.name!
+        }
+      );
+      //const accountFromDb = await authService.setGoogleAccount(account!);
+
+      return true;
+    },
     redirect() {
       return '/dashboard';
     }
-  }
+  },
+  debug: true
 };

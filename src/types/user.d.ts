@@ -8,7 +8,7 @@ interface User {
   email: string,
   image: string,
   id: string,
-  friends: [],
+  friends: User[],
   access_token: string,
   refresh_token: string
 }
@@ -41,4 +41,11 @@ interface InteractWithFriendRequest {
   senderId: string,
   receiverId: string,
   access_token: string
+}
+
+interface UserRegistration {
+  email: string,
+  name: string,
+  password: string,
+  confirmPassword: string
 }

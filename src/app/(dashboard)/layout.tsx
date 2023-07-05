@@ -45,6 +45,7 @@ const Layout = async ({ children }: LayoutProps) => {
     : `${process.env.BACKEND_IMAGE_URL}${session.user.image!}`;
 
 
+
   return (
     <div className='w-full h-screen flex'>
       <div className='md:hidden'>

@@ -6,9 +6,18 @@ const nextConfig = {
       protocol: 'http',
       hostname: 'localhost',
       port: '8080',
-      pathname: '/userimages/**',
+      pathname: '/userimages/**'
     }]
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/auth/login',
+        destination: 'http://localhost:8080/auth/google/login'
+      }
+    ];
   }
-}
 
-module.exports = nextConfig
+};
+
+module.exports = nextConfig;
