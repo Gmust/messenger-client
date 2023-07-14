@@ -7,7 +7,7 @@ interface User {
   name: string,
   email: string,
   image: string,
-  id: string,
+  _id: string,
   friends: User[],
   access_token: string,
   refresh_token: string

@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface SidebarChatList {
   chats: Chat[],
@@ -16,7 +17,7 @@ interface ExtendedMessage extends Message {
 
 export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
 
-  // const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
+  const [unseenMessages, setUnseenMessages] = useState<any[]>([]);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -62,30 +63,20 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
       }
     }, [pathname]);
   */
-
   return (
     <ul role='link' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
       {
         chats.sort().map((chat) => {
-          /*  const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
-              return unseenMsg.senderId === friend.id;
-            }).length;
-  */
+          const chatName = chat.participants.map((member) => {
+            return member._id === session.user.id ? null : member.name;
+          });
           return (
             <li key={chat._id} className='flex'>
               <a href={`/dashboard/chat/${chat._id}`}
                  className='text-gray-700 hover:text-violet-600 hover:bg-gray-50 group flex items-center gap-y-3
                   rounded-md p-2 text-base leading-6 font-semibold'>
-                {chat.participants.map((participant) => {
-                  const friend = participant.id != session.user.id ? participant : null;
-
-                  return (
-                    <>
-                      {friend?.name}
-                    </>
-                  );
-                })}
-                {/*    {unseenMessagesCount! > 0 ?
+                {chatName}
+                {/*     {unseenMessagesCount! > 0 ?
                   <div className='bg-violet-600 font-medium text-sm text-white w-4 h-4 rounded-full flex justify-center
                                  items-center p-2 ml-1'>
                     {unseenMessagesCount}

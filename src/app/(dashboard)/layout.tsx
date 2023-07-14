@@ -7,6 +7,10 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FriendRequestsSidebarOption } from '@/components/elements/FriendRequestsSidebar/FriendRequestsSidebarOption';
 import { userService } from '@/service/userService';
+import { MobileChatLayout } from '@/components/elements/MobileChatLayout';
+import { chatService } from '@/service/chatService';
+import { SidebarChatList } from '@/components/elements/SidebarChatList/SidebarChatList';
+import { createImgUrl } from '@/lib';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -40,17 +44,18 @@ const Layout = async ({ children }: LayoutProps) => {
   const { incomingReq } = await userService.getFriendRequests(
     { userId: session!.user.id, access_token: session!.user.access_token }
   );
-  const imageUrl = session.user.image!.startsWith('https://lh3.googleusercontent.com')
-    ? session.user.image!
-    : `${process.env.BACKEND_IMAGE_URL}${session.user.image!}`;
-
+  const userChats = await chatService.getAllUserChats(session.user.id, session.user.access_token);
+  const imageUrl = createImgUrl(session.user.image!);
 
 
   return (
     <div className='w-full h-screen flex'>
       <div className='md:hidden'>
-        {/*   <MobileChatLayout session={session} add={add} sidebarOptions={sidebarOptions}
-                          unseenRequestCount={unseenRequestCount} />*/}
+        <MobileChatLayout session={session}
+                          image={imageUrl}
+                          friends={session.user.friends}
+                          sidebarOptions={sidebarOptions}
+                          unseenRequestCount={incomingReq} />
       </div>
       <div className='hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200
                       bg-white px-6 '>
@@ -65,7 +70,7 @@ const Layout = async ({ children }: LayoutProps) => {
         <nav className='flex flex-1 flex-col'>
           <ul role='link' className='flex flex-1 flex-col gap-y-7'>
             <li>
-              {/*        <SidebarChatList add={add} sessionId={session.user.id} />*/}
+              <SidebarChatList chats={userChats} session={session} />
             </li>
             <li>
               <div className='text-base font-semibold leading-6 text-gray-400'>
@@ -110,10 +115,10 @@ const Layout = async ({ children }: LayoutProps) => {
                 </div>
                 <span className='sr-only'>Your profile</span>
                 <div className='flex flex-col'>
-                  <span aria-hidden={true}>
+                  <span aria-hidden={true} className='truncate'>
                     {session?.user?.name}
                   </span>
-                  <span className='text-base text-zinc-400' aria-hidden={true}>
+                  <span className='text-base text-zinc-400 truncate' aria-hidden={true}>
                     {session?.user?.email}
                   </span>
                 </div>

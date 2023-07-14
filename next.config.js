@@ -9,14 +9,6 @@ const nextConfig = {
       pathname: '/userimages/**'
     }]
   },
-  async rewrites() {
-    return [
-      {
-        source: '/auth/login',
-        destination: 'http://localhost:8080/auth/google/login'
-      }
-    ];
-  }
 
 };
 

@@ -35,19 +35,22 @@ export const authOptions: AuthOptions = {
       collections: {
         Users: 'users',
         Accounts: 'accounts'
-      }
+      },
     }
   ),
   session: {
     strategy: 'jwt'
   },
   pages: {
-    signIn: '/login'
+    signIn: '/login',
+    signOut: '/dashboard',
+    error: '/login'
   },
   providers: [
     GoogleProvider({
       clientId: getGoogleCredentials().clientId,
-      clientSecret: getGoogleCredentials().clientSecret
+      clientSecret: getGoogleCredentials().clientSecret,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -56,6 +59,7 @@ export const authOptions: AuthOptions = {
         password: { label: 'password', type: 'password' }
       },
       type: 'credentials',
+      //@ts-ignore
       async authorize(credentials, req) {
         if (!credentials || !credentials.email || !credentials.password) {
           toast.error('Provide all credentials');
@@ -64,6 +68,12 @@ export const authOptions: AuthOptions = {
           email: credentials?.email!,
           password: credentials?.password!
         });
+
+        if (!userData) {
+          toast.error('Invalid credentials');
+          return null;
+        }
+
         if (userData) {
           return userData.user as User;
         } else {
@@ -82,16 +92,18 @@ export const authOptions: AuthOptions = {
         return token;
       }
       return {
+        //@ts-ignore
         id: dbResult.id,
         name: dbResult.name,
         email: dbResult.email,
-        picture: dbResult.image,
+        image: dbResult.image,
         access_token: dbResult.access_token,
         refresh_token: dbResult.refresh_token,
         friends: dbResult.friends
       };
     },
     async session({ session, token, user }) {
+
       if (token && session.user) {
         session.user.id = token.id;
         session.user.name = token.name;
@@ -112,13 +124,11 @@ export const authOptions: AuthOptions = {
           name: user.name!
         }
       );
-      //const accountFromDb = await authService.setGoogleAccount(account!);
-
+      if (!userFromDb) return false;
       return true;
     },
     redirect() {
       return '/dashboard';
     }
   },
-  debug: true
 };

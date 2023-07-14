@@ -37,21 +37,24 @@ const Page = () => {
 
 
   const loginWithCredentials = async ({ email, password }: formData) => {
-    setIsLoading(true);
-    try {
-      const res = await signIn('credentials',
-        { email, password, redirect: false, callbackUrl: '/dashboard' }
-      );
-      if (res!.status == 401) {
-        toast.error('Invalid credentials!');
-      }
-    } catch (e) {
-      console.log(e);
-      toast.error('Error');
-    } finally {
-      setIsLoading(false);
+      if (!email) return setError('email', { type: 'required', message: 'Provide email' });
+      if (!password) return setError('password', { type: 'required', message: 'Provide password' });
+      setIsLoading(true);
+      signIn('credentials',
+        { email, password, redirect: true })
+        // @ts-ignore
+        .then(({ ok, error }) => {
+          if (ok) {
+            router.push('/dashboard');
+          } else {
+            console.log(error);
+            toast.error('Credentials do not match!');
+          }
+        })
+        .finally(() => setIsLoading(false))
+      ;
     }
-  };
+  ;
 
   return (
     <>
@@ -82,7 +85,7 @@ const Page = () => {
                 <input
                   className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
                    focus:outline-none focus:shadow-outline' id='email' placeholder='Email' type='email'
-                  {...register('email', {})}
+                  {...register('email', { required: true })}
                 />
                 <p className='text-sm text-red-600 mt-1'>
                   {errors.email?.message}
@@ -95,7 +98,7 @@ const Page = () => {
                 <input
                   className='shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700 mb-3
                   leading-tight focus:outline-none focus:shadow-outline' id='password'
-                  placeholder='******************' type='password' {...register('password', {})}
+                  placeholder='******************' type='password' {...register('password', { required: true })}
                 />
                 <p className='text-sm text-red-600 mt-1'>
                   {errors.password?.message}
@@ -115,7 +118,7 @@ const Page = () => {
                 Already have an account?
                 <Link href='/registration'
                       className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer ml-2'>
-                  Login
+                  Register
                   here</Link>
               </p>
             </form>
