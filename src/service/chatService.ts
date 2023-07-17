@@ -13,7 +13,7 @@ export const chatService = {
           }
         }
       );
-      return res.data;
+      return res.data as Chat[];
     } catch (e) {
       console.log(e);
     }
