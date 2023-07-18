@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
 import Link from 'next/link';
+import { pusherClient, toPusherKey } from '@/lib';
+import { useSession } from 'next-auth/react';
 
 interface FriendRequestsSidebarOption {
   initialUnseenRequestsCount: number;
@@ -13,7 +15,33 @@ interface FriendRequestsSidebarOption {
 export const FriendRequestsSidebarOption = ({ initialUnseenRequestsCount, userId }: FriendRequestsSidebarOption) => {
 
   const [unseenRequestsCount, setUnseenRequestsCount] = useState<number>(initialUnseenRequestsCount);
+  const { data: session } = useSession();
   const router = useRouter();
+
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherKey(`user:${session?.user.id}:incoming-friend-requests`)
+    );
+    pusherClient.subscribe(toPusherKey(`user:${session?.user.id}:friends`));
+
+    const friendRequestHandler = () => {
+      setUnseenRequestsCount((prev) => prev + 1);
+    };
+
+    const addedFriendHandler = () => {
+      setUnseenRequestsCount((prev) => prev - 1);
+    };
+
+    pusherClient.bind('incoming-friend-requests', friendRequestHandler);
+    pusherClient.bind('new-friend', addedFriendHandler);
+
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}:incoming-friend-requests`));
+      pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}:friends`));
+      pusherClient.unbind('new-friend', addedFriendHandler);
+      pusherClient.unbind('incoming-friend-requests', friendRequestHandler);
+    };
+  }, [router, session?.user.id]);
 
   return (
     <Link href='/dashboard/friend-requests'

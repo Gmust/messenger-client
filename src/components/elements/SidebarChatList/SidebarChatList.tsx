@@ -1,19 +1,21 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getLastItem, pusherClient, toPusherKey } from '@/lib';
+import { Session } from 'next-auth';
+import toast from 'react-hot-toast';
+import { UnseenChatToast } from '@/components/elements/UnseenChatToast/UnseenChatToast';
 
 interface SidebarChatList {
   chats: Chat[],
-  session: any
+  session: Session
 }
 
-/*
 interface ExtendedMessage extends Message {
   senderImage: string,
   senderName: string
 }
-*/
 
 export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
 
@@ -21,48 +23,53 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  /*
-    useEffect(() => {
-      pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`));
-      pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`user:${session.user.id}:chats`));
+    pusherClient.subscribe(toPusherKey(`user:${session.user.id}:friends`));
 
-      const chatHandler = (message: ExtendedMessage) => {
-        const shouldNotify = pathname !== `/dashboard/chat/${chatHrefConstructor(sessionId, message.senderId)}`;
-        if (!shouldNotify) return;
-        console.log('here');
-        toast.custom((t) => (
-          <UnseenChatToast t={t} sessionId={sessionId} senderId={message.senderId} senderImg={message.senderImage}
-                           senderName={message.senderName} senderMessage={message.text} />
-        ));
-        setUnseenMessages((prev) => [...prev, message]);
-      };
+    const chatHandler = (message: ExtendedMessage) => {
+      const shouldNotify = pathname == `/dashboard/chat/${chats.includes({
+        messages: [],
+        participants: [],
+        _id: getLastItem(pathname!)
+      })})}`;
+      console.log(shouldNotify);
+      console.log(pathname);
+      console.log('--------------------------');
+      console.log(getLastItem(pathname!));
+      if (!shouldNotify) return;
+      console.log('here');
+      toast.custom((t) => (
+        <UnseenChatToast t={t} sessionId={session.user.id} senderId={message.sender} senderImg={message.senderImage}
+                         senderName={message.senderName} senderMessage={message.content} chatId={message.chat} />
+      ));
+      setUnseenMessages((prev) => [...prev, message]);
+    };
 
-      const newFriendHandler = () => {
-        router.refresh();
-      };
+    const newFriendHandler = () => {
+      router.refresh();
+    };
 
-      pusherClient.bind('new_message', chatHandler);
-      pusherClient.bind('new_friend', newFriendHandler);
+    pusherClient.bind('new-message', chatHandler);
+    pusherClient.bind('new-friend', newFriendHandler);
 
-      return () => {
-        pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:chats`));
-        pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`));
-        pusherClient.unbind('new_message', chatHandler);
-        pusherClient.unbind('new_friend', newFriendHandler);
-      };
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`user:${session.user.id}:chats`));
+      pusherClient.unsubscribe(toPusherKey(`user:${session.user.id}:friends`));
+      pusherClient.unbind('new-message', chatHandler);
+      pusherClient.unbind('new-friend', newFriendHandler);
+    };
 
-    }, [pathname, sessionId, router]);
-  */
+  }, [pathname, session.user.id, router]);
 
-  /*
-    useEffect(() => {
-      if (pathname?.includes('chat')) {
-        setUnseenMessages((prev) => {
-          return prev?.filter((msg) => !pathname.includes(msg.senderId));
-        });
-      }
-    }, [pathname]);
-  */
+  useEffect(() => {
+    if (pathname?.includes('chat')) {
+      setUnseenMessages((prev) => {
+        return prev?.filter((msg) => !pathname.includes(msg.senderId));
+      });
+    }
+  }, [pathname]);
+
   return (
     <ul role='link' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
       {

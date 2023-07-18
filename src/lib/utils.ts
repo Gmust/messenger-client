@@ -14,3 +14,5 @@ export const createImgUrl = (img: string) => {
     ? img
     : `${process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL}${img}`;
 };
+
+export const getLastItem = (path: string) => path.substring(path.lastIndexOf('/') + 1);

@@ -6,12 +6,16 @@ import { useRouter } from 'next/navigation';
 import { userService } from '@/service/userService';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import { pusherClient, toPusherKey } from '@/lib';
 
-type FriendRequestCardProps = FriendRequest & { type: 'incoming' | 'outcoming' }
+type FriendRequestCardProps = FriendRequest & { type: 'incoming' | 'outcoming', incomingRequests: FriendRequest[] }
 
-export const FriendRequestCard = ({ _id, image, email, type }: FriendRequestCardProps) => {
+export const FriendRequests = ({ _id, image, email, type, incomingRequests }: FriendRequestCardProps) => {
 
   const { data: session } = useSession();
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>(incomingRequests);
+  const router = useRouter();
 
   const acceptFriend = async () => {
     try {
@@ -61,9 +65,27 @@ export const FriendRequestCard = ({ _id, image, email, type }: FriendRequestCard
     }
   };
 
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherKey(`user:${session?.user.id}:incoming_friend_requests`)
+    );
+
+    const friendRequestHandler = ({ email, image, name }: FriendRequest) => {
+      setFriendRequests((prev) => [...prev, { email, image, name, _id }]);
+    };
+
+    pusherClient.bind('incoming-friend-requests', friendRequestHandler);
+
+    return () => {
+      pusherClient.unsubscribe(
+        toPusherKey(`user:${session?.user.id}:incoming-friend-requests`)
+      );
+      pusherClient.unbind('incoming-friend-requests', friendRequestHandler);
+    };
+  }, [session?.user.id]);
+
   const imageUrl = image.startsWith('https://lh3.googleusercontent.com') ? image : `http://localhost:8080/userimages/${image}`;
 
-  const router = useRouter();
   return (
     <div key={_id} className='flex gap-4 items-center'>
       <UserPlus className='text-black' />

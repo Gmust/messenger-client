@@ -1,4 +1,4 @@
-import { FriendRequestCard } from '@/components/elements';
+import { FriendRequests } from '@/components/elements';
 
 export const FriendRequests = (
   { incomingFriendRequests, outComingFriendsRequests }: {
@@ -12,7 +12,7 @@ export const FriendRequests = (
         <h2 className='text-xl text-gray-600 mb-4'>Incoming friend requests</h2>
         {incomingFriendRequests && incomingFriendRequests.length > 0 ?
           incomingFriendRequests.map(req =>
-            <FriendRequestCard {...req.senderId} key={req._id} type='incoming' />
+            <FriendRequests {...req.senderId} key={req._id} type='incoming' />
           )
           :
           <p className='text-gray-500'>
@@ -25,7 +25,7 @@ export const FriendRequests = (
         <h2 className='text-xl text-gray-600 mb-4'>Out coming friend requests</h2>
         {outComingFriendsRequests && outComingFriendsRequests.length > 0 ?
           outComingFriendsRequests.map(req =>
-            <FriendRequestCard {...req.receiverId} key={req._id} type='outcoming' />
+            <FriendRequests {...req.receiverId} key={req._id} type='outcoming' />
           )
           :
           <p className='text-gray-500'>
