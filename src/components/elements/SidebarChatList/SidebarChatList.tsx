@@ -12,37 +12,33 @@ interface SidebarChatList {
   session: Session
 }
 
-interface ExtendedMessage extends Message {
+interface ExtendedMessage {
   senderImage: string,
-  senderName: string
+  senderName: string,
+  message: Message
 }
 
 export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
 
-  const [unseenMessages, setUnseenMessages] = useState<any[]>([]);
+  const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:chats`));
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:friends`));
-
-    const chatHandler = (message: ExtendedMessage) => {
-      const shouldNotify = chats.some((chat) => chat._id === getLastItem(pathname!));
-      alert('here')
-      console.log(shouldNotify);
-      console.log(pathname);
-      console.log('--------------------------');
+    const chatHandler = (extendedMessage: ExtendedMessage) => {
       console.log(getLastItem(pathname!));
+      const shouldNotify = chats.some((chat) => chat._id !== getLastItem(pathname!));
+      console.log(';should nitify', shouldNotify);
       if (!shouldNotify) return;
       toast.custom((t) => (
-        <UnseenChatToast t={t} sessionId={session.user.id} senderId={message.sender} senderImg={message.senderImage}
-                         senderName={message.senderName} senderMessage={message.content} chatId={message.chat} />
+        <UnseenChatToast t={t} sessionId={session.user.id} senderId={extendedMessage.message.sender}
+                         senderImg={extendedMessage.senderImage} senderName={extendedMessage.senderName}
+                         senderMessage={extendedMessage.message.content} chatId={extendedMessage.message.chat} />
       ));
-      setUnseenMessages((prev) => [...prev, message]);
+      setUnseenMessages((prev) => [...prev, extendedMessage.message]);
     };
-
     const newFriendHandler = () => {
       router.refresh();
     };
@@ -62,7 +58,7 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
   useEffect(() => {
     if (pathname?.includes('chat')) {
       setUnseenMessages((prev) => {
-        return prev?.filter((msg) => !pathname.includes(msg.senderId));
+        return prev?.filter((msg) => !pathname.includes(msg.chat));
       });
     }
   }, [pathname]);
@@ -74,18 +70,25 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
           const chatName = chat.participants.map((member) => {
             return member._id === session.user.id ? null : member.name;
           });
+
+          const friend = chat.participants.find((member) => member._id !== session.user.id);
+          console.log(friend);
+          const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
+            return unseenMsg.sender === friend!._id;
+          }).length;
+
           return (
             <li key={chat._id} className='flex'>
               <a href={`/dashboard/chat/${chat._id}`}
                  className='text-gray-700 hover:text-violet-600 hover:bg-gray-50 group flex items-center gap-y-3
                   rounded-md p-2 text-base leading-6 font-semibold'>
                 {chatName}
-                {/*     {unseenMessagesCount! > 0 ?
+                {unseenMessagesCount! > 0 ?
                   <div className='bg-violet-600 font-medium text-sm text-white w-4 h-4 rounded-full flex justify-center
                                  items-center p-2 ml-1'>
                     {unseenMessagesCount}
                   </div>
-                  : null}*/}
+                  : null}
               </a>
             </li>
           );
