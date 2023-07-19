@@ -21,8 +21,8 @@ interface AddFriend {
 
 interface FriendRequests {
   _id: string,
-  senderId: FriendRequest,
-  receiverId: FriendRequest,
+  senderId: User,
+  receiverId: User,
 }
 
 interface FriendRequest {

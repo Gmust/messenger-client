@@ -24,21 +24,18 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
   const pathname = usePathname();
 
   useEffect(() => {
+
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:chats`));
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:friends`));
 
     const chatHandler = (message: ExtendedMessage) => {
-      const shouldNotify = pathname == `/dashboard/chat/${chats.includes({
-        messages: [],
-        participants: [],
-        _id: getLastItem(pathname!)
-      })})}`;
+      const shouldNotify = chats.some((chat) => chat._id === getLastItem(pathname!));
+      alert('here')
       console.log(shouldNotify);
       console.log(pathname);
       console.log('--------------------------');
       console.log(getLastItem(pathname!));
       if (!shouldNotify) return;
-      console.log('here');
       toast.custom((t) => (
         <UnseenChatToast t={t} sessionId={session.user.id} senderId={message.sender} senderImg={message.senderImage}
                          senderName={message.senderName} senderMessage={message.content} chatId={message.chat} />

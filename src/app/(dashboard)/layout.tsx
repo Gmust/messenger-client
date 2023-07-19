@@ -69,9 +69,9 @@ const Layout = async ({ children }: LayoutProps) => {
 
         <nav className='flex flex-1 flex-col'>
           <ul role='link' className='flex flex-1 flex-col gap-y-7'>
-            <li>
+            {userChats && <li>
               <SidebarChatList chats={userChats} session={session} />
-            </li>
+            </li>}
             <li>
               <div className='text-base font-semibold leading-6 text-gray-400'>
                 Overview

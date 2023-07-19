@@ -23,6 +23,7 @@ export const UnseenChatToast = ({
                                   senderMessage,
                                   chatId
                                 }: UnseenChatToastProps) => {
+  console.log('here')
   return (
     <div
       className={cn(

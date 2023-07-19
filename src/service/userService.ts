@@ -29,7 +29,6 @@ export const userService = {
         Authorization: `Bearer ${data.access_token}`
       }
     });
-
     return {
       incomingReq: incomingReq.data,
       outComingReq: outComingReq.data
@@ -69,5 +68,5 @@ export const userService = {
       }
     });
     return res.data;
-  },
+  }
 };

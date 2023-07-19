@@ -6,60 +6,87 @@ import { useRouter } from 'next/navigation';
 import { userService } from '@/service/userService';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import { pusherClient, toPusherKey } from '@/lib';
 
-type FriendRequestCardProps = FriendRequest & { type: 'incoming' | 'outcoming', incomingRequests: FriendRequest[] }
 
-export const FriendRequests = ({ _id, image, email, type, incomingRequests }: FriendRequestCardProps) => {
+type FriendRequestCardProps = FriendRequest &
+  {
+    type: 'incoming' | 'outcoming',
+    incomingRequests?: FriendRequests[],
+    outcomingRequests?: FriendRequests[],
+    setIncoming?: SetStateAction<Dispatch<FriendRequests[]>>
+    setOutcoming?: SetStateAction<Dispatch<FriendRequests[]>>
+  }
+
+export const FriendRequestsCard = ({
+                                     _id,
+                                     image,
+                                     email,
+                                     type,
+                                     incomingRequests,
+                                     outcomingRequests,
+                                     setOutcoming,
+                                     setIncoming
+                                   }: FriendRequestCardProps) => {
 
   const { data: session } = useSession();
-  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>(incomingRequests);
   const router = useRouter();
 
-  const acceptFriend = async () => {
+  const acceptFriend = async (senderId: string) => {
     try {
-      const res = userService.acceptFriendRequest(
+      const res = await userService.acceptFriendRequest(
         {
           receiverId: session!.user.id,
           senderId: _id,
           access_token: session!.user.access_token
         }
       );
+      if (setIncoming) {
+        console.log(incomingRequests);
+        // @ts-ignore
+        setIncoming((prev) => prev.filter((req) => req.senderId._id !== senderId));
+      }
+      router.refresh();
       toast.success('User successfully added to friends ');
-      router.refresh();
     } catch (e) {
       console.log(e);
     }
   };
 
-  const denyFriend = async () => {
+  const denyFriend = async (senderId: string) => {
     try {
-      const res = userService.declineFriendRequest(
+      const res = await userService.declineFriendRequest(
         {
           receiverId: session!.user.id,
           senderId: _id,
           access_token: session!.user.access_token
         }
       );
+      if (setOutcoming) {
+        // @ts-ignore
+        setOutcoming((prev) => prev.filter((req) => req.senderId._id !== senderId));
+      }
+      router.refresh();
       toast.success(`Friend request from ${email} denied`);
-      router.refresh();
     } catch (e) {
       console.log(e);
     }
   };
 
-  const denyRequest = () => {
+  const denyRequest = async (senderId: string) => {
     try {
-      const res = userService.declineRequest(
+      const res = await userService.declineRequest(
         {
           receiverId: session!.user.id,
           senderId: _id,
           access_token: session!.user.access_token
         }
       );
-      toast.success(`Friend request to ${email} denied`);
+      // @ts-ignore
+      setOutcoming((prev) => prev.filter((req) => req.senderId._id !== senderId));
       router.refresh();
+      toast.success(`Friend request to ${email} denied`);
     } catch (e) {
       console.log(e);
     }
@@ -67,20 +94,21 @@ export const FriendRequests = ({ _id, image, email, type, incomingRequests }: Fr
 
   useEffect(() => {
     pusherClient.subscribe(
-      toPusherKey(`user:${session?.user.id}:incoming_friend_requests`)
+      toPusherKey(`user:${session?.user.id}:requests`)
     );
 
-    const friendRequestHandler = ({ email, image, name }: FriendRequest) => {
-      setFriendRequests((prev) => [...prev, { email, image, name, _id }]);
+    const denyRequestHandler = (sender: User) => {
+      // @ts-ignore
+      setOutcoming((prev) => prev.filter((req) => req.senderId._id !== sender._id));
     };
 
-    pusherClient.bind('incoming-friend-requests', friendRequestHandler);
+    pusherClient.bind('deny-request', denyRequestHandler);
 
     return () => {
       pusherClient.unsubscribe(
-        toPusherKey(`user:${session?.user.id}:incoming-friend-requests`)
+        toPusherKey(`user:${session?.user.id}:requests`)
       );
-      pusherClient.unbind('incoming-friend-requests', friendRequestHandler);
+      pusherClient.unbind('deny-request', denyRequestHandler);
     };
   }, [session?.user.id]);
 
@@ -95,7 +123,7 @@ export const FriendRequests = ({ _id, image, email, type, incomingRequests }: Fr
       {type === 'incoming' &&
         <button className='w-8 h-8 bg-violet-600 hover:bg-violet-700 grid place-items-center rounded-full
                                  transition hover:shadow-md' aria-label='accept friend'
-                onClick={() => acceptFriend()}
+                onClick={() => acceptFriend(_id)}
         >
           <Check className='font-semibold text-white w-3/4 h-3/4' />
         </button>
@@ -103,7 +131,7 @@ export const FriendRequests = ({ _id, image, email, type, incomingRequests }: Fr
       <button className='w-8 h-8 bg-red-600 hover:bg-red-700 grid place-items-center rounded-full
                                  transition hover:shadow-md' aria-label='denu friend'
               onClick={() => {
-                type === 'incoming' ? denyFriend() : denyRequest();
+                type === 'incoming' ? denyFriend(_id) : denyRequest(_id);
               }}
       >
         <X className='font-semibold text-white w-3/4 h-3/4'
