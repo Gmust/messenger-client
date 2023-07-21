@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getLastItem, pusherClient, toPusherKey } from '@/lib';
+import { createImgUrl, getLastItem, notifyMe, pusherClient, toPusherKey } from '@/lib';
 import { Session } from 'next-auth';
 import toast from 'react-hot-toast';
 import { UnseenChatToast } from '@/components/elements/UnseenChatToast/UnseenChatToast';
@@ -28,15 +28,14 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:chats`));
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:friends`));
     const chatHandler = (extendedMessage: ExtendedMessage) => {
-      console.log(getLastItem(pathname!));
       const shouldNotify = chats.some((chat) => chat._id !== getLastItem(pathname!));
-      console.log(';should nitify', shouldNotify);
       if (!shouldNotify) return;
       toast.custom((t) => (
         <UnseenChatToast t={t} sessionId={session.user.id} senderId={extendedMessage.message.sender}
                          senderImg={extendedMessage.senderImage} senderName={extendedMessage.senderName}
                          senderMessage={extendedMessage.message.content} chatId={extendedMessage.message.chat} />
       ));
+      notifyMe(extendedMessage.senderName, extendedMessage.message.content, createImgUrl(extendedMessage.senderImage));
       setUnseenMessages((prev) => [...prev, extendedMessage.message]);
     };
     const newFriendHandler = () => {
@@ -72,7 +71,6 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
           });
 
           const friend = chat.participants.find((member) => member._id !== session.user.id);
-          console.log(friend);
           const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
             return unseenMsg.sender === friend!._id;
           }).length;
