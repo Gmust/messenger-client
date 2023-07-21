@@ -10,6 +10,15 @@ export const authService = {
     });
     return data;
   },
+
+  async getUserById(id: string, access_token: string) {
+    const { data } = await $unAuthHost.get<User>(`/auth/user/${id}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    });
+    return data;
+  },
   async loginUser({ email, password }: ILoginUser) {
     const { data } = await $unAuthHost.post('/auth/login', { email, password });
     return data;

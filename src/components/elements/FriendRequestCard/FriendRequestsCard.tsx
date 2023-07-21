@@ -43,7 +43,6 @@ export const FriendRequestsCard = ({
         }
       );
       if (setIncoming) {
-        console.log(incomingRequests);
         // @ts-ignore
         setIncoming((prev) => prev.filter((req) => req.senderId._id !== senderId));
       }
@@ -116,10 +115,10 @@ export const FriendRequestsCard = ({
 
   return (
     <div key={_id} className='flex gap-4 items-center'>
-      <UserPlus className='text-black' />
-      <Image src={`${imageUrl}`} alt='user image' width={30} height={30}
-             className='rounded-md' />
-      <p className='font-medium text-lg'>{email}</p>
+        <UserPlus className='text-black' />
+        <Image src={`${imageUrl}`} alt='user image' width={30} height={30}
+               className='rounded-md' />
+        <p className='font-medium text-lg'>{email}</p>
       {type === 'incoming' &&
         <button className='w-8 h-8 bg-violet-600 hover:bg-violet-700 grid place-items-center rounded-full
                                  transition hover:shadow-md' aria-label='accept friend'

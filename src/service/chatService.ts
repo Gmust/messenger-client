@@ -1,4 +1,5 @@
 import { $authHost } from '@/service/index';
+import toast from 'react-hot-toast';
 
 
 export const chatService = {
@@ -64,6 +65,21 @@ export const chatService = {
       return res.data;
     } catch (e) {
       console.log(e);
+    }
+  },
+  async getChatByParticipants(firstParticipant: string, secondParticipant: string, access_token: string) {
+    try {
+      const res = await $authHost.get<Chat>(
+        `http://localhost:8080/chat/by-participants?firstParticipant=${firstParticipant}&secondParticipant=${secondParticipant}`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`
+          }
+        }
+      );
+      return res.data;
+    } catch (e: any) {
+      toast.error(e.response.data.error);
     }
   }
 };

@@ -2,7 +2,7 @@
 
 import { FriendRequestsCard } from '@/components/elements';
 import { useEffect, useState } from 'react';
-import { pusherClient, toPusherKey } from '@/lib';
+import { createImgUrl, notifyMe, pusherClient, toPusherKey } from '@/lib';
 import { useSession } from 'next-auth/react';
 
 export const FriendRequests = (
@@ -22,6 +22,7 @@ export const FriendRequests = (
     );
 
     const friendRequestHandler = ({ _id, senderId, receiverId }: FriendRequests) => {
+      notifyMe('New friend request', `Friend request from ${senderId.name}`, createImgUrl(senderId.image));
       setIncoming((prev) => [...prev, { _id, senderId, receiverId }]);
     };
 
@@ -60,7 +61,7 @@ export const FriendRequests = (
           outcoming.map(req =>
             <FriendRequestsCard key={req._id} type='outcoming' outcomingRequests={outcoming}
                                 setOutcoming={setOutcoming} email={req.receiverId.email} name={req.receiverId.name}
-                                image={req.receiverId.image} _id={req.receiverId._id}  />
+                                image={req.receiverId.image} _id={req.receiverId._id} />
           )
           :
           <p className='text-gray-500'>
