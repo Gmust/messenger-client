@@ -7,6 +7,7 @@ interface User {
   name: string,
   email: string,
   image: string,
+  bio: string
   _id: string,
   friends: User[],
   access_token: string,
@@ -46,6 +47,7 @@ interface InteractWithFriendRequest {
 interface UserRegistration {
   email: string,
   name: string,
+  bio: string
   password: string,
   confirmPassword: string
 }

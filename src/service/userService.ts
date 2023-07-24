@@ -79,5 +79,17 @@ export const userService = {
         Authorization: `Bearer ${data.access_token}`
       }
     });
+  },
+  async searchUsers(access_token: string, name: string, email: string) {
+    try {
+      const results = await $authHost.get(`users?name=${name}&email=${email}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      });
+      return results.data;
+    } catch (e) {
+      console.log(e);
+    }
   }
 };

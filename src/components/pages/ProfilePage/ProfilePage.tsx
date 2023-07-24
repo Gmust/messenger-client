@@ -14,7 +14,7 @@ import { AxiosError } from 'axios';
 
 type  ProfilePageProps = Omit<User, 'access_token' | 'refresh_token'>
 
-export const ProfilePage = ({ _id, name, friends, image, email }: ProfilePageProps) => {
+export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePageProps) => {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_BASE_URL;
   const { data: session } = useSession();
@@ -122,10 +122,7 @@ export const ProfilePage = ({ _id, name, friends, image, email }: ProfilePagePro
         </div>
 
         <div className='mt-12 flex flex-col justify-center'>
-          <p className='text-gray-600 text-center font-light lg:px-16'>An artist of considerable range, Ryan — the
-            name
-            taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music,
-            giving it a warm, intimate feel with a solid groove structure. An artist of considerable range.</p>
+          <p className='text-gray-600 text-center font-light lg:px-16'>{bio}</p>
         </div>
       </div>
 
