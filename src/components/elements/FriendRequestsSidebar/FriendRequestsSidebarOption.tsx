@@ -6,6 +6,7 @@ import { User } from 'lucide-react';
 import Link from 'next/link';
 import { pusherClient, toPusherKey } from '@/lib';
 import { useSession } from 'next-auth/react';
+import toast from 'react-hot-toast';
 
 interface FriendRequestsSidebarOption {
   initialUnseenRequestsCount: number;
@@ -23,6 +24,7 @@ export const FriendRequestsSidebarOption = ({ initialUnseenRequestsCount, userId
       toPusherKey(`user:${session?.user.id}:incoming-friend-requests`)
     );
     pusherClient.subscribe(toPusherKey(`user:${session?.user.id}:friends`));
+    pusherClient.subscribe(toPusherKey(`user:${session?.user.id}`));
 
     const friendRequestHandler = () => {
       setUnseenRequestsCount((prev) => prev + 1);
@@ -32,13 +34,21 @@ export const FriendRequestsSidebarOption = ({ initialUnseenRequestsCount, userId
       setUnseenRequestsCount((prev) => prev - 1);
     };
 
+    const deleteFriendHandler = (data: { status: string }) => {
+      toast(data.status);
+      router.refresh();
+    };
+
     pusherClient.bind('incoming-friend-requests', friendRequestHandler);
     pusherClient.bind('new-friend', addedFriendHandler);
+    pusherClient.bind('delete-from-friends', deleteFriendHandler);
 
     return () => {
       pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}:incoming-friend-requests`));
       pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}:friends`));
+      pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}`));
       pusherClient.unbind('new-friend', addedFriendHandler);
+      pusherClient.unbind('new-friend', deleteFriendHandler);
       pusherClient.unbind('incoming-friend-requests', friendRequestHandler);
     };
   }, [router, session?.user.id]);

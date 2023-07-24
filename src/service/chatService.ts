@@ -70,7 +70,7 @@ export const chatService = {
   async getChatByParticipants(firstParticipant: string, secondParticipant: string, access_token: string) {
     try {
       const res = await $authHost.get<Chat>(
-        `http://localhost:8080/chat/by-participants?firstParticipant=${firstParticipant}&secondParticipant=${secondParticipant}`,
+        `/chat/by-participants?firstParticipant=${firstParticipant}&secondParticipant=${secondParticipant}`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`

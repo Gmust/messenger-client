@@ -68,5 +68,16 @@ export const userService = {
       }
     });
     return res.data;
+  },
+  async deleteFromFriends(data: InteractWithFriendRequest) {
+    const res = await $authHost.delete('users/remove', {
+      data: {
+        senderId: data.senderId,
+        receiverId: data.receiverId
+      },
+      headers: {
+        Authorization: `Bearer ${data.access_token}`
+      }
+    });
   }
 };
