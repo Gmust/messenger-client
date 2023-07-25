@@ -1,8 +1,9 @@
 'use client';
-import TextareaAutosize from 'react-textarea-autosize';
 import { useRef, useState } from 'react';
-import { Button } from '@/components/shared/Button';
 import toast from 'react-hot-toast';
+import TextareaAutosize from 'react-textarea-autosize';
+
+import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
 
 interface ChatInput {

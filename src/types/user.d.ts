@@ -51,3 +51,9 @@ interface UserRegistration {
   password: string,
   confirmPassword: string
 }
+
+interface ChangeDataRequest {
+  access_token:string,
+  userId: string,
+  data: string
+}

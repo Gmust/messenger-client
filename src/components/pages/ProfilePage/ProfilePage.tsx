@@ -1,16 +1,22 @@
 'use client';
 
-import { Button } from '@/components/shared/Button';
-import Image from 'next/image';
-import { createImgUrl } from '@/lib';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { chatService } from '@/service/chatService';
-import { useSession } from 'next-auth/react';
-import { userService } from '@/service/userService';
 import { AxiosError } from 'axios';
+import { ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+
+import { Button } from '@/components/shared/Button';
+import { createImgUrl } from '@/lib';
+import { chatService } from '@/service/chatService';
+import { userService } from '@/service/userService';
+
+import { DataInformation } from './DataInformation';
+import { ProfileBio } from './ProfileBio';
+import { ProfileButtons } from './ProfileButtons';
+import { ProfileName } from './ProfileName';
 
 type  ProfilePageProps = Omit<User, 'access_token' | 'refresh_token'>
 
@@ -18,7 +24,11 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_BASE_URL;
   const { data: session } = useSession();
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [newBio, setNewBio] = useState<string>(bio);
+  const [newName, setNewName] = useState<string>(name);
 
   const handleStartMessaging = async () => {
     setLoading(true);
@@ -71,24 +81,54 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
     }
   };
 
+  const handleChangeName = async () => {
+    setLoading(true);
+    try {
+      const res = await userService.changeName({
+        data: newName,
+        userId: session?.user.id!,
+        access_token: session!.user.access_token
+      });
+      toast.success('Name has changed!');
+      setEdit(false);
+      setNewName(res);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError) {
+        toast.error(e.response!.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangeBio = async () => {
+    setLoading(true);
+    try {
+      const res = await userService.changeBio({
+        data: newBio,
+        userId: session?.user.id!,
+        access_token: session!.user.access_token
+      });
+      toast.success('Bio has changed!');
+      setEdit(false);
+      console.log(res);
+      setNewBio(res);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError) {
+        toast.error(e.response!.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='p-16'>
       <div className='p-8 bg-white shadow mt-8'>
         <div className='grid grid-cols-1 md:grid-cols-3'>
-          <div className='grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0'>
-            <div>
-              <p className='font-bold text-gray-700 text-xl'>{friends.length}</p>
-              <p className='text-gray-400'>Friends</p>
-            </div>
-            <div>
-              <p className='font-bold text-gray-700 text-xl'>10</p>
-              <p className='text-gray-400'>Image</p>
-            </div>
-            <div>
-              <p className='font-bold text-gray-700 text-xl'>89</p>
-              <p className='text-gray-400'>Files</p>
-            </div>
-          </div>
+          <DataInformation friends={friends} />
           <div className='relative'>
             <div
               className='w-24 h-24 lg:w-48 lg:h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500'>
@@ -96,34 +136,21 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
                      className='rounded-full' />
             </div>
           </div>
-          <div className='space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center'>
-            {friends.some((friend) => friend._id === session?.user.id) ?
-              <Button className='py-7 px-4 uppercase font-medium  bg-red-500 hover:bg-red-700' isLoading={loading}
-                      onClick={handleRemoveFromFriends}>
-                Delete from friends
-              </Button>
-              :
-              <Button className='py-7 px-4 uppercase font-medium  bg-indigo-700' isLoading={loading}
-                      onClick={handleAddToFriends}>
-                Add to friends
-              </Button>
-            }
-            <Button className='py-7 px-4 uppercase font-medium' onClick={handleStartMessaging} isLoading={loading}>
-              Message
-            </Button>
-          </div>
+          <ProfileButtons session={session!} _id={_id} loading={loading} friends={friends}
+                          handleStartMessaging={handleStartMessaging} setEdit={setEdit} edit={edit}
+                          handleAddToFriends={handleAddToFriends} handleRemoveFromFriends={handleRemoveFromFriends} />
         </div>
 
         <div className='mt-20 text-center border-b pb-12 space-y-4'>
-          <h1 className='text-4xl font-medium text-gray-700'>{name}</h1>
+          <ProfileName edit={edit} setEdit={setEdit} newName={newName} setNewName={setNewName}
+                       handleChangeName={handleChangeName} />
           <div className='font-light text-xl text-gray-500'>
             {email}
           </div>
         </div>
 
-        <div className='mt-12 flex flex-col justify-center'>
-          <p className='text-gray-600 text-center font-light lg:px-16'>{bio}</p>
-        </div>
+        <ProfileBio edit={edit} newBio={newBio} bio={bio} setNewBio={setNewBio}
+                    setEdit={setEdit} handleChangeBio={handleChangeBio} />
       </div>
 
 
@@ -133,8 +160,10 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
         </Button>
         <span className='tooltip rounded shadow-lg p-2 bg-gray-100 text-zinc-400 mt-20 '>Go back</span>
       </div>
+      ;
     </div>
-  );
+  )
+    ;
 };
 
 

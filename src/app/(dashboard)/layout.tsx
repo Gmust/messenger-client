@@ -1,16 +1,17 @@
-import Link from 'next/link';
-import { Icon, Icons } from '@/components/icons/icons';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { SignOutBtn } from '@/components/elements';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+
+import { SignOutBtn } from '@/components/elements';
 import { FriendRequestsSidebarOption } from '@/components/elements/FriendRequestsSidebar/FriendRequestsSidebarOption';
-import { userService } from '@/service/userService';
 import { MobileChatLayout } from '@/components/elements/MobileChatLayout';
-import { chatService } from '@/service/chatService';
 import { SidebarChatList } from '@/components/elements/SidebarChatList/SidebarChatList';
+import { Icon, Icons } from '@/components/icons/icons';
 import { createImgUrl } from '@/lib';
+import { authOptions } from '@/lib/auth';
+import { chatService } from '@/service/chatService';
+import { userService } from '@/service/userService';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -108,11 +109,11 @@ const Layout = async ({ children }: LayoutProps) => {
             <li className='-mx-6 mt-auto flex items-center'>
               <div
                 className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
-                <div className='relative h-8 w-8 bg-gray-50'>
+                <Link href={`dashboard/profile/${session.user.id}`} replace={true} className='relative h-8 w-8 bg-gray-50'>
                   <Image fill referrerPolicy='no-referrer' className='rounded-full'
                          src={imageUrl}
                          alt='Your profile picture' />
-                </div>
+                </Link>
                 <span className='sr-only'>Your profile</span>
                 <div className='flex flex-col'>
                   <span aria-hidden={true} className='truncate'>

@@ -91,5 +91,39 @@ export const userService = {
     } catch (e) {
       console.log(e);
     }
+  },
+  async changeBio({ userId, data, access_token }: ChangeDataRequest) {
+    try {
+      const results = await $authHost.patch(`users/update-bio`,
+        {
+          newBio: data,
+          userId: userId
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`
+          }
+        });
+      return results.data;
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async changeName({ userId, data, access_token }: ChangeDataRequest) {
+    try {
+      const results = await $authHost.patch(`users/update-name`,
+        {
+          newName: data,
+          userId: userId
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`
+          }
+        });
+      return results.data;
+    } catch (e) {
+      console.log(e);
+    }
   }
 };

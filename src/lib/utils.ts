@@ -39,7 +39,7 @@ export function notifyMe(title: string, msg: string, icon: string, song?: string
 
 function callNotify(title: any, msg: any, icone: any) {
   const sound = new Howl({
-    src: ['http://localhost:8080/audio/notification.m4a'],
+    src: ['/notification.m4a'],
     volume: 0.1,
     html5: true
   });
