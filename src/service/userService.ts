@@ -125,5 +125,17 @@ export const userService = {
     } catch (e) {
       console.log(e);
     }
+  },
+  async changePhoto(formData: FormData, access_token: string) {
+    try {
+      const res = await $authHost.patch('users/photo', formData, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      });
+      return res.data;
+    } catch (e) {
+      console.log(e);
+    }
   }
 };
