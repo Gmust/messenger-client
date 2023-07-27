@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { cn, createImgUrl, pusherClient, toPusherKey } from '@/lib';
+import Modal from '@/components/shared/Modal';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -15,6 +16,8 @@ interface MessagesProps {
 
 export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerImg, chatId }: MessagesProps) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openedImg, setOpenedImg] = useState<string>('');
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
@@ -71,7 +74,11 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                   })}>
                     {message.messageType === 'image' &&
                       <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
-                             alt={`${message.content} picture`} width={300} height={300}  />}
+                             alt={`${message.content} picture`} width={300} height={300}
+                             onClick={() => {
+                               setOpenedImg(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
+                               setIsOpen(true);
+                             }} />}
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
                       {formatTimestamp(message.timestamp!)}
@@ -92,6 +99,11 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
           );
         })}
       </div>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
+          <Image src={openedImg} alt={openedImg} fill />
+        </div>
+      </Modal>
     </div>
   );
 };

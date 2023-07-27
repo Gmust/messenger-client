@@ -7,6 +7,7 @@ import { Paperclip, X } from 'lucide-react';
 import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
 import Image from 'next/image';
+import Modal from '@/components/shared/Modal';
 
 interface ChatInput {
   chatPartner: User;
