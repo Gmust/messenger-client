@@ -69,7 +69,10 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                     'rounded-bl-none':
                       !hasNextMessageFromSameUser && !isCurrentUser
                   })}>
-                    {message.content}{' '}
+                    {message.messageType === 'image' &&
+                      <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
+                             alt={`${message.content} picture`} width={300} height={300}  />}
+                    {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
                       {formatTimestamp(message.timestamp!)}
                     </span>

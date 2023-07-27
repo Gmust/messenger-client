@@ -16,6 +16,7 @@ import { DataInformation } from './DataInformation';
 import { ProfileBio } from './ProfileBio';
 import { ProfileButtons } from './ProfileButtons';
 import { ProfileName } from './ProfileName';
+import { createImgUrl } from '@/lib';
 
 type  ProfilePageProps = Omit<User, 'access_token' | 'refresh_token'>
 
@@ -150,7 +151,6 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
       setLoading(false);
     }
   };
-
   return (
     <div className='p-16'>
       <div className='p-8 bg-white shadow -mt-8'>
@@ -166,7 +166,7 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
                    tracking-wide uppercase border border-blue cursor-pointer hover:bg-fuchsia-700 hover:text-white'>
                     <UploadCloud className='h-8 w-8' />
                     <span className='mt-2 text-base leading-normal'>Change photo</span>
-                    <input type='file' className='hidden' onChange={handleFileChange} />
+                    <input type='file' className='hidden' onChange={handleFileChange} accept='image/jpeg, image/png' />
                   </label>
                 </div>
                 {newImage && <div className='p-2 flex'>

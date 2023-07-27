@@ -81,5 +81,19 @@ export const chatService = {
     } catch (e: any) {
       toast.error(e.response.data.error);
     }
+  },
+  async sendMessageWithFile(formData: FormData, access_token: string, chat: string) {
+    try {
+      const res = await $authHost.post(`/chat/message/${chat}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`
+          }
+        });
+      return res.data;
+    } catch (e) {
+      console.log(e);
+    }
   }
 };

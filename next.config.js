@@ -7,6 +7,11 @@ const nextConfig = {
       hostname: 'localhost',
       port: '8080',
       pathname: '/userimages/**'
+    }, {
+      protocol: 'http',
+      hostname: 'localhost',
+      port: '8080',
+      pathname: '/chatfiles/**'
     }]
   },
 

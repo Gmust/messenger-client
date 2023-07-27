@@ -16,7 +16,6 @@ const page = async ({ params }: ProfilePageProps) => {
   if (!session || !params.profileId) return notFound();
   const user = await authService.getUserById(params.profileId, session.user.access_token);
 
-
   return (
     <>
       <ProfilePage {...user} />

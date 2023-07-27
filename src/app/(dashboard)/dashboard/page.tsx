@@ -47,13 +47,15 @@ const Dashboard = async () => {
                     <p className='mt-1 max-w-md '>
                     <span className='text-zinc-400'>
                       {
+                        chatInfo.messages.length > 0 ?
                         chatInfo?.messages.at(-1)!.sender === session.user.id
                           ? 'You: '
                           : ''
+                          :  ''
                       }
                     </span>
                       {
-                        chatInfo.messages.at(-1)!.content
+                        chatInfo.messages.length > 0 && chatInfo.messages.at(-1)!.content
                       }
                     </p>
                   </div>
