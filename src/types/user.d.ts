@@ -47,7 +47,6 @@ interface InteractWithFriendRequest {
 interface UserRegistration {
   email: string,
   name: string,
-  bio: string
   password: string,
   confirmPassword: string
 }

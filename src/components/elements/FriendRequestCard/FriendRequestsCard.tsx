@@ -1,13 +1,14 @@
 'use client';
 
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Check, UserPlus, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { userService } from '@/service/userService';
 import { useSession } from 'next-auth/react';
-import toast from 'react-hot-toast';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+
 import { createImgUrl, pusherClient, toPusherKey } from '@/lib';
+import { userService } from '@/service/userService';
 
 
 type FriendRequestCardProps = FriendRequest &
@@ -115,7 +116,7 @@ export const FriendRequestsCard = ({
   return (
     <div key={_id} className='flex gap-4 items-center'>
         <UserPlus className='text-black' />
-        <Image src={createImgUrl(image)} alt='user image' width={30} height={30}
+       <Image src={createImgUrl(image)} alt='user image' width={30} height={30}
                className='rounded-md' />
         <p className='font-medium text-lg'>{email}</p>
       {type === 'incoming' &&

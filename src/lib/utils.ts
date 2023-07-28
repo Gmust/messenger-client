@@ -1,6 +1,6 @@
 import clsx, { ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import { Howl } from 'howler';
+import { twMerge } from 'tailwind-merge';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -37,12 +37,12 @@ export function notifyMe(title: string, msg: string, icon: string, song?: string
   }
 }
 
-function callNotify(title: any, msg: any, icone: any) {
+function callNotify(title: any, msg: any, icon: any) {
   const sound = new Howl({
     src: ['/notification.m4a'],
     volume: 0.1,
     html5: true
   });
-  new Notification(title, { body: msg, icon: icone });
+  new Notification(title, { body: msg, icon: icon });
   sound.play();
 }

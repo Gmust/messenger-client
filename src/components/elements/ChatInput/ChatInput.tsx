@@ -3,11 +3,10 @@ import { ChangeEvent, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Paperclip, X } from 'lucide-react';
+import Image from 'next/image';
 
 import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
-import Image from 'next/image';
-import Modal from '@/components/shared/Modal';
 
 interface ChatInput {
   chatPartner: User;
@@ -24,13 +23,8 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const [selectedImageDataURL, setSelectedImageDataURL] = useState<string | null>(null);
 
   const sendMessage = async () => {
-    console.log(messageType);
-    console.log(file);
     if (messageType === 'text') {
       if (!input) return;
-    }
-    if (messageType === 'image' || 'audio' || 'video') {
-      if (!file) return;
     }
     setIsLoading(true);
     try {
@@ -96,7 +90,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
 
         {selectedImageDataURL ?
           <>
-            <div className='relative h-32 w-32'>
+           <div className='relative h-32 w-32'>
               <Image src={selectedImageDataURL!} alt={file?.name!} fill={true} />
             </div>
             <div className='flex truncate'>

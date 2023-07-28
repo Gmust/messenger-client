@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { registerUserValidator } from '@/lib/validations/register-user';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Button } from '@/components/shared/Button';
-import Link from 'next/link';
-import Image from 'next/image';
+import { registerUserValidator } from '@/lib/validations/register-user';
 import { authService } from '@/service/authService';
-import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
 
 type formData = z.infer<typeof registerUserValidator>
 
@@ -42,7 +43,7 @@ const Page = () => {
   return (
     <section className='bg-gray-50 dark:bg-gray-900'>
       <div className='flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0'>
-        <Image src='/twitter.svg' className='mb-2' alt='logo' width={50} height={50} />
+       <Image src='/twitter.svg' className='mb-2' alt='logo' width={50} height={50} />
         <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white'>
           Create account
         </h1>

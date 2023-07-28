@@ -9,7 +9,7 @@ export const UserCard = ({ _id, image, bio, email, friends, name }: Omit<User, '
       <Link href={`http://localhost:3000/dashboard/profile/${_id}`} replace={true}>
         <div className='flex items-center space-x-4'>
           <div className='flex-shrink-0'>
-            <Image className='w-8 h-8 rounded-full' height={32} width={32} src={createImgUrl(image)}
+           <Image className='w-8 h-8 rounded-full' height={32} width={32} src={createImgUrl(image)}
                    alt={`${email} image`} />
           </div>
           <div className='flex-1 min-w-0'>

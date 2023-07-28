@@ -1,6 +1,6 @@
+import { Dispatch, SetStateAction } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Pencil, X } from 'lucide-react';
-import { Dispatch, SetStateAction } from 'react';
 
 
 interface BioProps {

@@ -1,9 +1,10 @@
-import { AuthOptions } from 'next-auth';
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import clientPromise from '@/lib/mongodb';
-import GoogleProvider from 'next-auth/providers/google';
-import CredentialsProvider from 'next-auth/providers/credentials';
 import toast from 'react-hot-toast';
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
+import { AuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
+
+import clientPromise from '@/lib/mongodb';
 import { authService } from '@/service/authService';
 
 

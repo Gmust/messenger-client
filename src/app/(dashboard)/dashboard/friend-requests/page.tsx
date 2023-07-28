@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
+
+import { FriendRequests } from '@/components/pages/FriendRequests/FriendRequests';
 import { authOptions } from '@/lib/auth';
 import { userService } from '@/service/userService';
-import { FriendRequests } from '@/components/pages/FriendRequests/FriendRequests';
 
 const page = async () => {
 

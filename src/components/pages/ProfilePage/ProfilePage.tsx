@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react';
 
 import { ProfileImage } from '@/components/pages/ProfilePage/ProfileImage';
 import { Button } from '@/components/shared/Button';
+import { createImgUrl } from '@/lib';
 import { chatService } from '@/service/chatService';
 import { userService } from '@/service/userService';
 
@@ -16,7 +17,6 @@ import { DataInformation } from './DataInformation';
 import { ProfileBio } from './ProfileBio';
 import { ProfileButtons } from './ProfileButtons';
 import { ProfileName } from './ProfileName';
-import { createImgUrl } from '@/lib';
 
 type  ProfilePageProps = Omit<User, 'access_token' | 'refresh_token'>
 

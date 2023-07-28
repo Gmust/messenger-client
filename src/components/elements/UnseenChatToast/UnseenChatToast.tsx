@@ -2,7 +2,8 @@
 
 import toast, { type Toast } from 'react-hot-toast';
 import Image from 'next/image';
-import { cn } from '@/lib';
+
+import { cn, createImgUrl } from '@/lib';
 
 interface UnseenChatToastProps {
   t: Toast;
@@ -40,7 +41,7 @@ export const UnseenChatToast = ({
                 fill
                 referrerPolicy='no-referrer'
                 className='rounded-full'
-                src={senderImg}
+                src={createImgUrl(senderImg)}
                 alt={`${senderName} profile picture`}
               />
             </div>

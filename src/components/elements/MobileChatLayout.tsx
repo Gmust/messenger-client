@@ -1,18 +1,19 @@
 'use client';
 
 import { Fragment, useEffect, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Session } from 'next-auth';
-import { usePathname } from 'next/navigation';
 import { Dialog, Transition } from '@headlessui/react';
 import { Menu, X } from 'lucide-react';
-import { Button, buttonVariants } from '@/components/shared/Button';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Session } from 'next-auth';
+
 import { SidebarOption } from '@/app/(dashboard)/layout';
-import { Icon, Icons } from '@/components/icons/icons';
 import { FriendRequestsSidebarOption } from '@/components/elements/FriendRequestsSidebar/FriendRequestsSidebarOption';
+import { SidebarChatList } from '@/components/elements/SidebarChatList/SidebarChatList';
 import { SignOutBtn } from '@/components/elements/SignOutBtn/SignOutBtn';
-import { mockSession } from 'next-auth/client/__tests__/helpers/mocks';
+import { Icon, Icons } from '@/components/icons/icons';
+import { Button, buttonVariants } from '@/components/shared/Button';
 
 interface MobileChatLayoutProps {
   friends: string[],
@@ -83,7 +84,7 @@ export const MobileChatLayout = ({
                         </div>
                       </div>
                       <div className='relative mt-6 flex-1 px-4 sm:px-6'>
-                        {/* Content */}
+                        Content
 
                         {friends.length > 0 ? (
                           <div className='text-xs font-semibold leading-6 text-gray-400'>
@@ -95,12 +96,12 @@ export const MobileChatLayout = ({
                           <ul
                             role='list'
                             className='flex flex-1 flex-col gap-y-7'>
-                            <li>
-                              {/*              <SidebarChatList
+                   {/*         <li>
+                                           <SidebarChatList
                                 friends={friends}
                                 sessionId={session.user.id}
-                              />*/}
-                            </li>
+                              />
+                            </li>*/}
 
                             <li>
                               <div className='text-xs font-semibold leading-6 text-gray-400'>
@@ -139,7 +140,7 @@ export const MobileChatLayout = ({
                               <div
                                 className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900'>
                                 <div className='relative h-8 w-8 bg-gray-50'>
-                                  <Image
+                                 <Image
                                     fill
                                     referrerPolicy='no-referrer'
                                     className='rounded-full'
@@ -166,7 +167,7 @@ export const MobileChatLayout = ({
                           </ul>
                         </nav>
 
-                        {/* content end */}
+                        content end
                       </div>
                     </div>
                   </Dialog.Panel>

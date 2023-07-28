@@ -1,5 +1,6 @@
-import { cva, VariantProps } from 'class-variance-authority';
 import { ButtonHTMLAttributes } from 'react';
+import { cva, VariantProps } from 'class-variance-authority';
+
 import { cn } from '@/lib';
 
 export const inputVariants = cva(

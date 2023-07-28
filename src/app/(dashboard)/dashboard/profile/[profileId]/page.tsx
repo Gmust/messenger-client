@@ -1,8 +1,9 @@
-import { authService } from '@/service/authService';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+
 import { ProfilePage } from '@/components/pages/ProfilePage/ProfilePage';
+import { authOptions } from '@/lib/auth';
+import { authService } from '@/service/authService';
 
 interface ProfilePageProps {
   params: {

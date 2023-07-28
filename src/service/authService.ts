@@ -1,5 +1,6 @@
-import { $unAuthHost } from '@/service/index';
 import { Account } from 'next-auth';
+
+import { $unAuthHost } from '@/service/index';
 
 export const authService = {
   async getUserByEmail(email: string) {

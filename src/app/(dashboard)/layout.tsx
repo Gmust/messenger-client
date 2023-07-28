@@ -111,7 +111,7 @@ const Layout = async ({ children }: LayoutProps) => {
                 className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
                 <Link href={`http://localhost:3000/dashboard/profile/${session.user.id}`} replace={true}
                       className='relative h-8 w-8 bg-gray-50'>
-                  <Image fill referrerPolicy='no-referrer' className='rounded-full'
+                 <Image fill referrerPolicy='no-referrer' className='rounded-full'
                          src={imageUrl}
                          alt='Your profile picture' />
                 </Link>

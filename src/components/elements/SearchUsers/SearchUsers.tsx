@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { userService } from '@/service/userService';
 import { useSession } from 'next-auth/react';
+
 import { UserCard } from '@/components/elements/UserCard/UserCard';
+import { userService } from '@/service/userService';
 
 export const SearchUsers = () => {
 

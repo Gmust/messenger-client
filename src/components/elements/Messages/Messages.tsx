@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { cn, createImgUrl, pusherClient, toPusherKey } from '@/lib';
+
 import Modal from '@/components/shared/Modal';
+import { cn, createImgUrl, pusherClient, toPusherKey } from '@/lib';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -15,6 +16,7 @@ interface MessagesProps {
 }
 
 export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerImg, chatId }: MessagesProps) => {
+
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openedImg, setOpenedImg] = useState<string>('');
@@ -45,7 +47,6 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
     };
   }, [chatId]);
 
-
   return (
     <div id='messages'
          className='flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded
@@ -54,7 +55,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
         {messages.map((message, index) => {
           const isCurrentUser = message.sender === sessionId;
           const hasNextMessageFromSameUser = messages[index - 1]?.sender === messages[index].sender;
-
+          const avatar = createImgUrl(isCurrentUser ? (sessionImg as string) : (chatPartnerImg as string));
           return (
             <div className='chat-message' key={`${message._id}-${message.timestamp}`}>
               <div className={cn('flex items-end m-2', {
@@ -72,7 +73,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                     'rounded-bl-none':
                       !hasNextMessageFromSameUser && !isCurrentUser
                   })}>
-                    {message.messageType === 'image' &&
+                   {message.messageType === 'image' &&
                       <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
                              alt={`${message.content} picture`} width={300} height={300}
                              onClick={() => {
@@ -90,7 +91,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                   'order-1': !isCurrentUser,
                   'invisible': hasNextMessageFromSameUser
                 })}>
-                  <Image src={createImgUrl(isCurrentUser ? (sessionImg as string) : (chatPartnerImg as string))}
+                 <Image src={avatar}
                          alt={isCurrentUser ? 'User image' : 'Chat partner image'} fill referrerPolicy='no-referrer'
                          className='rounded-full' />
                 </div>
@@ -101,7 +102,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
-          <Image src={openedImg} alt={openedImg} fill />
+         <Image src={openedImg} alt={openedImg} fill />
         </div>
       </Modal>
     </div>

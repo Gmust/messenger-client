@@ -1,5 +1,6 @@
-import { $authHost } from '@/service/index';
 import toast from 'react-hot-toast';
+
+import { $authHost } from '@/service/index';
 
 
 export const chatService = {

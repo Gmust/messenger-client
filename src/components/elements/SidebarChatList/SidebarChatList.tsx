@@ -1,11 +1,12 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { createImgUrl, getLastItem, notifyMe, pusherClient, toPusherKey } from '@/lib';
-import { Session } from 'next-auth';
 import toast from 'react-hot-toast';
+import { usePathname, useRouter } from 'next/navigation';
+import { Session } from 'next-auth';
+
 import { UnseenChatToast } from '@/components/elements/UnseenChatToast/UnseenChatToast';
+import { createImgUrl, getLastItem, notifyMe, pusherClient, toPusherKey } from '@/lib';
 
 interface SidebarChatList {
   chats: Chat[],
@@ -28,8 +29,9 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:chats`));
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:friends`));
     const chatHandler = (extendedMessage: ExtendedMessage) => {
-      const shouldNotify = chats.some((chat) => chat._id !== getLastItem(pathname!));
-      if (!shouldNotify) return;
+      const shouldNotify = chats.some((chat) => chat._id === getLastItem(pathname!));
+      console.log(shouldNotify)
+      if (shouldNotify) return;
       toast.custom((t) => (
         <UnseenChatToast t={t} sessionId={session.user.id} senderId={extendedMessage.message.sender}
                          senderImg={extendedMessage.senderImage} senderName={extendedMessage.senderName}

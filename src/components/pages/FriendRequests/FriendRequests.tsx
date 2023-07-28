@@ -1,9 +1,10 @@
 'use client';
 
-import { FriendRequestsCard } from '@/components/elements';
 import { useEffect, useState } from 'react';
-import { createImgUrl, notifyMe, pusherClient, toPusherKey } from '@/lib';
 import { useSession } from 'next-auth/react';
+
+import { FriendRequestsCard } from '@/components/elements';
+import { createImgUrl, notifyMe, pusherClient, toPusherKey } from '@/lib';
 
 export const FriendRequests = (
   { incomingFriendRequests, outComingFriendsRequests }: {

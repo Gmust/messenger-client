@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { User } from 'lucide-react';
 import Link from 'next/link';
-import { pusherClient, toPusherKey } from '@/lib';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import toast from 'react-hot-toast';
+
+import { pusherClient, toPusherKey } from '@/lib';
 
 interface FriendRequestsSidebarOption {
   initialUnseenRequestsCount: number;
