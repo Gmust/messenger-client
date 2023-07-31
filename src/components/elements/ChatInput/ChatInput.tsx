@@ -2,9 +2,11 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import TextareaAutosize from 'react-textarea-autosize';
-import { Paperclip, X } from 'lucide-react';
-import Image from 'next/image';
+import { Paperclip } from 'lucide-react';
 
+import { AudioInput } from '@/components/elements/ChatInput/FileInputs/AudioInput';
+import { ImageInput } from '@/components/elements/ChatInput/FileInputs/ImageInput';
+import { VideoInput } from '@/components/elements/ChatInput/FileInputs/VideoInput';
 import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
 
@@ -20,7 +22,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const [input, setInput] = useState<string>('');
   const [messageType, setMessageType] = useState<'text' | 'image' | 'video' | 'audio' | 'geolocation'>('text');
   const [file, setFile] = useState<File | null>(null);
-  const [selectedImageDataURL, setSelectedImageDataURL] = useState<string | null>(null);
+  const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
 
   const sendMessage = async () => {
     if (messageType === 'text') {
@@ -43,20 +45,20 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
         setInput('');
         textareaRef.current?.focus();
       }
-      if (messageType === 'image') {
+      if (messageType === 'image' || 'video' || 'audio') {
         const formData = new FormData();
         formData.append('chat', chatId);
         //@ts-ignore
         formData.append('sender', user.id);
         formData.append('recipient', chatPartner._id);
         formData.append('content', '');
-        formData.append('messageType', 'image');
+        formData.append('messageType', messageType);
         formData.append('file', file!);
         console.log(formData);
         await chatService.sendMessageWithFile(formData, user.access_token, chatId);
         setMessageType('text');
         setFile(null);
-        setSelectedImageDataURL(null);
+        setSelectedDataURL(null);
       }
     } catch (e) {
       console.log(e);
@@ -70,12 +72,21 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      setMessageType('image');
+      if (selectedFile.type.startsWith('video')) {
+        console.log('here');
+        setMessageType('video');
+      }
+      if (selectedFile.type.startsWith('audio')) {
+        setMessageType('audio');
+      }
+      if (selectedFile.type.startsWith('image')) {
+        setMessageType('image');
+      }
       const reader = new FileReader();
-
+      console.log(messageType);
       reader.onload = (event) => {
-        const imageDataURL = event.target!.result as string;
-        setSelectedImageDataURL(imageDataURL);
+        const dataUrl = event.target!.result as string;
+        setSelectedDataURL(dataUrl);
       };
 
       reader.readAsDataURL(selectedFile);
@@ -88,18 +99,18 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
       <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300
                       focus-within:ring-2 focus:ring-violet-600'>
 
-        {selectedImageDataURL ?
+        {selectedDataURL ?
           <>
-           <div className='relative h-32 w-32'>
-              <Image src={selectedImageDataURL!} alt={file?.name!} fill={true} />
-            </div>
-            <div className='flex truncate'>
-              {file?.name}
-              <X className='text-red-700' onClick={() => {
-                setFile(null);
-                setSelectedImageDataURL(null);
-              }} />
-            </div>
+            {file?.type.startsWith('audio') &&
+              <AudioInput />}
+            {file?.type.startsWith('video') &&
+              <VideoInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
+                          setFile={setFile} />}
+            {file?.type.startsWith('image') &&
+              <ImageInput
+                file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL} setFile={setFile}
+              />
+            }
           </>
           :
           <><TextareaAutosize
@@ -124,7 +135,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
               </div>
             </div>
           </>
-
         }
 
 

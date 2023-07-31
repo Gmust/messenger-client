@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 
 import Modal from '@/components/shared/Modal';
 import { cn, createImgUrl, pusherClient, toPusherKey } from '@/lib';
+import { Message } from '@/types/chat';
+import { Play } from 'lucide-react';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -20,6 +22,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openedImg, setOpenedImg] = useState<string>('');
+  const [openedVideo, setOpenedVideo] = useState<string>('');
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
@@ -74,12 +77,29 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                       !hasNextMessageFromSameUser && !isCurrentUser
                   })}>
                    {message.messageType === 'image' &&
-                      <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
-                             alt={`${message.content} picture`} width={300} height={300}
-                             onClick={() => {
-                               setOpenedImg(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
-                               setIsOpen(true);
-                             }} />}
+                     <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
+                            alt={`${message.content} picture`} width={300} height={300}
+                            onClick={() => {
+                              setOpenedVideo('');
+                              setOpenedImg(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
+                              setIsOpen(true);
+                            }} />}
+                    {message.messageType === 'video' &&
+                      <div className='relative'>
+                        <video width={420} height={384} onPlay={() => {
+                        }} autoPlay={false} controls={false}
+                               onClick={(e) => {
+                                 e.preventDefault();
+                                 setOpenedImg('');
+                                 setOpenedVideo(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
+                                 setIsOpen(true);
+                               }} className='h-full'
+                        >
+                          <source src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`} />
+                        </video>
+                        <Play className='absolute bottom-2'/>
+                      </div>
+                    }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
                       {formatTimestamp(message.timestamp!)}
@@ -91,7 +111,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                   'order-1': !isCurrentUser,
                   'invisible': hasNextMessageFromSameUser
                 })}>
-                 <Image src={avatar}
+                  <Image src={avatar}
                          alt={isCurrentUser ? 'User image' : 'Chat partner image'} fill referrerPolicy='no-referrer'
                          className='rounded-full' />
                 </div>
@@ -101,9 +121,20 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
         })}
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
-         <Image src={openedImg} alt={openedImg} fill />
-        </div>
+        <div>{openedImg &&
+          <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
+            <Image src={openedImg} alt={openedImg} fill />
+          </div>
+        }
+          {openedVideo &&
+            <div className='video-wrapper w-96'>
+              <iframe
+                src={openedVideo}
+                allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                allowFullScreen>
+              </iframe>
+            </div>
+          }</div>
       </Modal>
     </div>
   );

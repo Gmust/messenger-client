@@ -1,10 +1,12 @@
-interface Chat {
+import { Dispatch, SetStateAction } from 'react';
+
+export interface Chat {
   _id: string,
   participants: User[],
   messages: Message[]
 }
 
-interface Message {
+export interface Message {
   _id?: string,
   sender: string,
   recipient: string,
@@ -14,3 +16,9 @@ interface Message {
   chat: string
 }
 
+export interface FileInputProps {
+  selectedDataURL: string,
+  file: File | null,
+  setFile: Dispatch<SetStateAction<File | null>>
+  setSelectedDataURL: Dispatch<SetStateAction<string | null>>
+}

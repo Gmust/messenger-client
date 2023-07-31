@@ -10,6 +10,15 @@
     @apply visible z-50;
 }
 
+.video-wrapper {
+    @apply aspect-video
+}
+
+.video-wrapper iframe{
+    width: 100%;
+    height: 100%;
+}
+
 @tailwind utilities;
 
 @layer base {
