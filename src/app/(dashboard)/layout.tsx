@@ -12,6 +12,7 @@ import { createImgUrl } from '@/lib';
 import { authOptions } from '@/lib/auth';
 import { chatService } from '@/service/chatService';
 import { userService } from '@/service/userService';
+import { VolumeHandler } from '@/components/elements/VolumeHandler/VolumeHandler';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -106,26 +107,32 @@ const Layout = async ({ children }: LayoutProps) => {
             </li>
 
 
-            <li className='-mx-6 mt-auto flex items-center'>
-              <div
-                className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
-                <Link href={`http://localhost:3000/dashboard/profile/${session.user.id}`} replace={true}
-                      className='relative h-8 w-8 bg-gray-50'>
-                 <Image fill referrerPolicy='no-referrer' className='rounded-full'
-                         src={imageUrl}
-                         alt='Your profile picture' />
-                </Link>
-                <span className='sr-only'>Your profile</span>
-                <div className='flex flex-col'>
+            <li className='-mx-6 mt-auto flex flex-col '>
+
+              <VolumeHandler/>
+
+              <div className='flex items-center'>
+                <div
+                  className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
+                  <Link href={`http://localhost:3000/dashboard/profile/${session.user.id}`} replace={true}
+                        className='relative h-8 w-8 bg-gray-50'>
+                    <Image fill referrerPolicy='no-referrer' className='rounded-full'
+                           src={imageUrl}
+                           alt='Your profile picture' />
+                  </Link>
+                  <span className='sr-only'>Your profile</span>
+                  <div className='flex flex-col'>
                   <span aria-hidden={true} className='truncate'>
                     {session?.user?.name}
                   </span>
-                  <span className='text-base text-zinc-400 truncate' aria-hidden={true}>
+                    <span className='text-base text-zinc-400 truncate' aria-hidden={true}>
                     {session?.user?.email}
                   </span>
+                  </div>
                 </div>
+                <SignOutBtn className='h-full aspect-square' />
               </div>
-              <SignOutBtn className='h-full aspect-square' />
+
             </li>
           </ul>
         </nav>

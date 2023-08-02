@@ -6,7 +6,6 @@ import { FileInputProps } from '@/types/chat';
 
 
 export const ImageInput = ({ selectedDataURL, setSelectedDataURL, setFile, file }: FileInputProps) => {
-  console.log('here');
   return (
     <>
       <div className='relative h-32 w-32'>

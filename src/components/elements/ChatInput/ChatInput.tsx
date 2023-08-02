@@ -24,44 +24,47 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const [file, setFile] = useState<File | null>(null);
   const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
 
-  const sendMessage = async () => {
-    if (messageType === 'text') {
-      if (!input) return;
-    }
+  const sendMessageWithFile = async () => {
     setIsLoading(true);
     try {
-      if (messageType === 'text') {
-        await chatService.sendMessage(
-          {
-            chat: chatId,
-            access_token: user.access_token,
-            //@ts-ignore
-            sender: user.id,
-            recipient: chatPartner._id,
-            content: input,
-            messageType: 'text'
-          }
-        );
-        setInput('');
-        textareaRef.current?.focus();
-      }
-      if (messageType === 'image' || 'video' || 'audio') {
-        const formData = new FormData();
-        formData.append('chat', chatId);
-        //@ts-ignore
-        formData.append('sender', user.id);
-        formData.append('recipient', chatPartner._id);
-        formData.append('content', '');
-        formData.append('messageType', messageType);
-        formData.append('file', file!);
-        console.log(formData);
-        await chatService.sendMessageWithFile(formData, user.access_token, chatId);
-        setMessageType('text');
-        setFile(null);
-        setSelectedDataURL(null);
-      }
+      const formData = new FormData();
+      formData.append('chat', chatId);
+      //@ts-ignore
+      formData.append('sender', user.id);
+      formData.append('recipient', chatPartner._id);
+      formData.append('content', '');
+      formData.append('messageType', messageType);
+      formData.append('file', file!);
+      await chatService.sendMessageWithFile(formData, user.access_token, chatId);
+      setMessageType('text');
+      setFile(null);
+      setSelectedDataURL(null);
     } catch (e) {
-      console.log(e);
+      toast.error('Something went wrong, please try again later!');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!input) return;
+    setIsLoading(true);
+    try {
+      await chatService.sendMessage(
+        {
+          chat: chatId,
+          access_token: user.access_token,
+          //@ts-ignore
+          sender: user.id,
+          recipient: chatPartner._id,
+          content: input,
+          messageType: 'text'
+        }
+      );
+      setInput('');
+      textareaRef.current?.focus();
+
+    } catch (e) {
       toast.error('Something went wrong, please try again later!');
     } finally {
       setIsLoading(false);
@@ -69,11 +72,11 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFile(null);
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
       if (selectedFile.type.startsWith('video')) {
-        console.log('here');
         setMessageType('video');
       }
       if (selectedFile.type.startsWith('audio')) {
@@ -83,7 +86,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
         setMessageType('image');
       }
       const reader = new FileReader();
-      console.log(messageType);
       reader.onload = (event) => {
         const dataUrl = event.target!.result as string;
         setSelectedDataURL(dataUrl);
@@ -102,7 +104,8 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
         {selectedDataURL ?
           <>
             {file?.type.startsWith('audio') &&
-              <AudioInput />}
+              <AudioInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
+                          setFile={setFile} />}
             {file?.type.startsWith('video') &&
               <VideoInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                           setFile={setFile} />}
@@ -146,7 +149,10 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
             <input type='file' id='chat-file' className='hidden' onChange={handleFileChange} />
           </div>
           <div className='flex-shrink-0'>
-            <Button onClick={() => sendMessage()} type='submit' className='text-lg' isLoading={isLoading}>
+            <Button onClick={() => {
+              messageType === 'text' && sendMessage();
+              (messageType === 'image' || messageType === 'audio' || messageType === 'video') && sendMessageWithFile();
+            }} className='text-lg' isLoading={isLoading}>
               Post
             </Button>
           </div>

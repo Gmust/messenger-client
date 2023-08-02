@@ -1,13 +1,17 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
+import { saveAs } from 'file-saver';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+import { VideoMessage } from '@/components/elements/Messages/MesssagesTypes/VideoMessage';
+import { Button } from '@/components/shared/Button';
 import Modal from '@/components/shared/Modal';
-import { cn, createImgUrl, pusherClient, toPusherKey } from '@/lib';
+import { cn, createImgUrl, getLastItem, pusherClient, toPusherKey } from '@/lib';
 import { Message } from '@/types/chat';
-import { Play } from 'lucide-react';
+
+import { AudioMessage } from './MesssagesTypes/AudioMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -30,6 +34,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
     const timestampParsed = Date.parse(String(timestamp));
     return format(timestampParsed, 'HH:mm');
   };
+
 
   useEffect(() => {
     pusherClient.subscribe(
@@ -85,20 +90,10 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                               setIsOpen(true);
                             }} />}
                     {message.messageType === 'video' &&
-                      <div className='relative'>
-                        <video width={420} height={384} onPlay={() => {
-                        }} autoPlay={false} controls={false}
-                               onClick={(e) => {
-                                 e.preventDefault();
-                                 setOpenedImg('');
-                                 setOpenedVideo(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
-                                 setIsOpen(true);
-                               }} className='h-full'
-                        >
-                          <source src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`} />
-                        </video>
-                        <Play className='absolute bottom-2'/>
-                      </div>
+                      <VideoMessage message={message} setOpenedImg={setOpenedImg} setOpenedVideo={setOpenedVideo}
+                                    setIsOpen={setIsOpen} />}
+                    {message.messageType === 'audio' &&
+                      <AudioMessage content={message.content} />
                     }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
@@ -122,12 +117,20 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div>{openedImg &&
-          <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
-            <Image src={openedImg} alt={openedImg} fill />
-          </div>
+          <>
+            <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
+              <Image src={openedImg} alt={openedImg} fill />
+            </div>
+            <div className='mt-6'>
+              <Button onClick={(e) => {
+                e.preventDefault();
+                saveAs(openedImg, `${getLastItem(openedImg)}`);
+              }}>Download</Button>
+            </div>
+          </>
         }
           {openedVideo &&
-            <div className='video-wrapper w-96'>
+            <div className='video-wrapper w-96 h-96'>
               <iframe
                 src={openedVideo}
                 allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'

@@ -7,6 +7,7 @@ import { Session } from 'next-auth';
 
 import { UnseenChatToast } from '@/components/elements/UnseenChatToast/UnseenChatToast';
 import { createImgUrl, getLastItem, notifyMe, pusherClient, toPusherKey } from '@/lib';
+import { Chat, Message } from '@/types/chat';
 
 interface SidebarChatList {
   chats: Chat[],
@@ -30,7 +31,6 @@ export const SidebarChatList = ({ chats, session }: SidebarChatList) => {
     pusherClient.subscribe(toPusherKey(`user:${session.user.id}:friends`));
     const chatHandler = (extendedMessage: ExtendedMessage) => {
       const shouldNotify = chats.some((chat) => chat._id === getLastItem(pathname!));
-      console.log(shouldNotify)
       if (shouldNotify) return;
       toast.custom((t) => (
         <UnseenChatToast t={t} sessionId={session.user.id} senderId={extendedMessage.message.sender}

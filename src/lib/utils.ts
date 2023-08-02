@@ -46,3 +46,5 @@ function callNotify(title: any, msg: any, icon: any) {
   new Notification(title, { body: msg, icon: icon });
   sound.play();
 }
+
+

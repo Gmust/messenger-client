@@ -1,6 +1,7 @@
 import toast from 'react-hot-toast';
 
 import { $authHost } from '@/service/index';
+import { Chat, Message } from '@/types/chat';
 
 
 export const chatService = {
@@ -43,8 +44,8 @@ export const chatService = {
         }
       });
       return res.data;
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
+      console.log(e.request.data);
     }
   },
   async sendMessage({
@@ -93,8 +94,8 @@ export const chatService = {
           }
         });
       return res.data;
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
+      console.log(e.request.data.message);
     }
   }
 };

@@ -113,7 +113,6 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
       });
       toast.success('Bio has changed!');
       setEdit(false);
-      console.log(res);
       setNewBio(res);
     } catch (e) {
       console.log(e);
@@ -127,7 +126,6 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      console.log(e.target.files);
       setNewImage(e.target.files[0]);
     } else {
       console.log('No files found in the event object.');
