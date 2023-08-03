@@ -12,6 +12,7 @@ import { cn, createImgUrl, getLastItem, pusherClient, toPusherKey } from '@/lib'
 import { Message } from '@/types/chat';
 
 import { AudioMessage } from './MesssagesTypes/AudioMessage';
+import { ImageMessage } from '@/components/elements/Messages/MesssagesTypes/ImageMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -82,13 +83,9 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                       !hasNextMessageFromSameUser && !isCurrentUser
                   })}>
                    {message.messageType === 'image' &&
-                     <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
-                            alt={`${message.content} picture`} width={300} height={300}
-                            onClick={() => {
-                              setOpenedVideo('');
-                              setOpenedImg(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
-                              setIsOpen(true);
-                            }} />}
+                     <ImageMessage message={message} setOpenedImg={setOpenedImg} setOpenedVideo={setOpenedVideo}
+                                   setIsOpen={setIsOpen} />
+                   }
                     {message.messageType === 'video' &&
                       <VideoMessage message={message} setOpenedImg={setOpenedImg} setOpenedVideo={setOpenedVideo}
                                     setIsOpen={setIsOpen} />}
@@ -136,6 +133,12 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                 allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
                 allowFullScreen>
               </iframe>
+              <div className='mt-6'>
+                <Button onClick={(e) => {
+                  e.preventDefault();
+                  saveAs(openedVideo, `${getLastItem(openedVideo)}`);
+                }}>Download</Button>
+              </div>
             </div>
           }</div>
       </Modal>
