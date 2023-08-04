@@ -7,12 +7,12 @@ import { SignOutBtn } from '@/components/elements';
 import { FriendRequestsSidebarOption } from '@/components/elements/FriendRequestsSidebar/FriendRequestsSidebarOption';
 import { MobileChatLayout } from '@/components/elements/MobileChatLayout';
 import { SidebarChatList } from '@/components/elements/SidebarChatList/SidebarChatList';
+import { VolumeHandler } from '@/components/elements/VolumeHandler/VolumeHandler';
 import { Icon, Icons } from '@/components/icons/icons';
 import { createImgUrl } from '@/lib';
 import { authOptions } from '@/lib/auth';
 import { chatService } from '@/service/chatService';
 import { userService } from '@/service/userService';
-import { VolumeHandler } from '@/components/elements/VolumeHandler/VolumeHandler';
 
 interface LayoutProps {
   children: React.ReactNode;

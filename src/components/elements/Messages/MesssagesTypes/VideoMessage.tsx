@@ -1,6 +1,7 @@
-import { Play } from 'lucide-react';
-import { Message } from '@/types/chat';
 import { Dispatch, SetStateAction } from 'react';
+import { Play } from 'lucide-react';
+
+import { Message } from '@/types/chat';
 
 interface VideoMessageProps {
   message: Message,

@@ -21,4 +21,5 @@ export interface FileInputProps {
   file: File | null,
   setFile: Dispatch<SetStateAction<File | null>>
   setSelectedDataURL: Dispatch<SetStateAction<string | null>>
+  setMessageType: Dispatch<SetStateAction<"text" | "image" | "video" | "audio" | "geolocation">>
 }

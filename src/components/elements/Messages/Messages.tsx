@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
+import { ImageMessage } from '@/components/elements/Messages/MesssagesTypes/ImageMessage';
 import { VideoMessage } from '@/components/elements/Messages/MesssagesTypes/VideoMessage';
 import { Button } from '@/components/shared/Button';
 import Modal from '@/components/shared/Modal';
@@ -12,7 +12,6 @@ import { cn, createImgUrl, getLastItem, pusherClient, toPusherKey } from '@/lib'
 import { Message } from '@/types/chat';
 
 import { AudioMessage } from './MesssagesTypes/AudioMessage';
-import { ImageMessage } from '@/components/elements/Messages/MesssagesTypes/ImageMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -29,7 +28,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
   const [openedImg, setOpenedImg] = useState<string>('');
   const [openedVideo, setOpenedVideo] = useState<string>('');
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
+
 
   const formatTimestamp = (timestamp: number | Date) => {
     const timestampParsed = Date.parse(String(timestamp));
@@ -115,7 +114,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div>{openedImg &&
           <>
-            <div className='relative h-60 w-60 sm:h-96 sm:w-96'>
+            <div className='relative min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] h-full w-full '>
               <Image src={openedImg} alt={openedImg} fill />
             </div>
             <div className='mt-6'>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Volume1, Volume2, VolumeX } from 'lucide-react';
+
 import { cn } from '@/lib';
 
 export const VolumeHandler = () => {
@@ -15,8 +16,8 @@ export const VolumeHandler = () => {
   }, [volume]);
 
   return (
-    <div className='flex flex-col space-y-2'>
-      <div className='flex justify-between mx-2'>
+    <div className='flex flex-col jusify-center space-y-2'>
+      <div className='flex justify-between mx-3'>
         <VolumeX className={cn('', {
           'text-red-500': volume === 0
         })} />
@@ -33,10 +34,10 @@ export const VolumeHandler = () => {
         }
       </div>
       <input type='range' step={0.01} max={1} min={0} onChange={(e) => setVolume(Number(e.target.value))}
-             className='appearance-none bg-transparent [&::-webkit-slider-runnable-track]:rounded-full
+             className='appearance-none bg-gray-100 [&::-webkit-slider-runnable-track]:rounded-full
               [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:appearance-none
                [&::-webkit-slider-thumb]:h-[20px] [&::-webkit-slider-thumb]:w-[20px] [&::-webkit-slider-thumb]:rounded-full
-                [&::-webkit-slider-thumb]:bg-purple-500'
+                [&::-webkit-slider-thumb]:bg-purple-500 mx-3'
       />
     </div>
   );

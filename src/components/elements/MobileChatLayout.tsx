@@ -166,8 +166,6 @@ export const MobileChatLayout = ({
                             </li>
                           </ul>
                         </nav>
-
-                        content end
                       </div>
                     </div>
                   </Dialog.Panel>
