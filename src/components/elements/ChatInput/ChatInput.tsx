@@ -9,6 +9,7 @@ import { TextMessage } from '@/components/elements/ChatInput/FileInputs/TextMess
 import { VideoInput } from '@/components/elements/ChatInput/FileInputs/VideoInput';
 import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
+import { FileInput } from '@/components/elements/ChatInput/FileInputs/FileInput';
 
 interface ChatInput {
   chatPartner: User;
@@ -20,11 +21,13 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
-  const [messageType, setMessageType] = useState<'text' | 'image' | 'video' | 'audio' | 'geolocation'>('text');
+  const [messageType, setMessageType] = useState<'text' | 'image' | 'video' | 'audio' | 'geolocation' | 'file'>('text');
   const [file, setFile] = useState<File | null>(null);
   const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
 
   const sendMessageWithFile = async () => {
+    console.log(file);
+    console.log('gete');
     if (!file) {
       setMessageType('text');
       if (input) await sendMessage();
@@ -91,6 +94,13 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
       if (selectedFile.type.startsWith('image')) {
         setMessageType('image');
       }
+      if (!file?.type.startsWith('audio') || !file?.type.startsWith('video') || !file?.type.startsWith('image') && file) {
+        setMessageType('file');
+      }
+      if (!file) {
+        setMessageType('text');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target!.result as string;
@@ -120,6 +130,13 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
                           setFile={setFile}
               />
             }
+            {!file?.type.startsWith('audio') || !file?.type.startsWith('video') || !file?.type.startsWith('image') && file ?
+              <FileInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
+                         setFile={setFile}
+                         setMessageType={setMessageType} />
+              :
+              null
+            }
           </>
           :
           <TextMessage setInput={setInput} input={input} chatPartner={chatPartner} sendMessage={sendMessage}
@@ -135,7 +152,8 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           <div className='flex-shrink-0'>
             <Button onClick={() => {
               messageType === 'text' && sendMessage();
-              (messageType === 'image' || messageType === 'audio' || messageType === 'video') && sendMessageWithFile();
+              (messageType === 'image' || messageType === 'audio' || messageType === 'video' || messageType === 'file')
+              && sendMessageWithFile();
             }} className='text-lg' isLoading={isLoading}>
               Post
             </Button>

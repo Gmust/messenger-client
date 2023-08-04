@@ -12,6 +12,7 @@ import { cn, createImgUrl, getLastItem, pusherClient, toPusherKey } from '@/lib'
 import { Message } from '@/types/chat';
 
 import { AudioMessage } from './MesssagesTypes/AudioMessage';
+import { FileMessage } from '@/components/elements/Messages/MesssagesTypes/FileMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -90,6 +91,9 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                                     setIsOpen={setIsOpen} />}
                     {message.messageType === 'audio' &&
                       <AudioMessage content={message.content} />
+                    }
+                    {message.messageType === 'file' &&
+                      <FileMessage content={message.content} />
                     }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>

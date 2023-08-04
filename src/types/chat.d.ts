@@ -10,7 +10,7 @@ export interface Message {
   _id?: string,
   sender: string,
   recipient: string,
-  messageType?: 'text' | 'image' | 'video' | 'audio' | 'geolocation'
+  messageType?: 'text' | 'image' | 'video' | 'audio' | 'geolocation' | 'file'
   content: string,
   timestamp?: number | Date
   chat: string
@@ -21,5 +21,5 @@ export interface FileInputProps {
   file: File | null,
   setFile: Dispatch<SetStateAction<File | null>>
   setSelectedDataURL: Dispatch<SetStateAction<string | null>>
-  setMessageType: Dispatch<SetStateAction<"text" | "image" | "video" | "audio" | "geolocation">>
+  setMessageType: Dispatch<SetStateAction<'text' | 'image' | 'video' | 'audio' | 'geolocation' | 'file'>>
 }
