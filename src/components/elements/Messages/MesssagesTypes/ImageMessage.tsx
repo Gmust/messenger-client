@@ -15,11 +15,13 @@ export const ImageMessage = ({ setOpenedVideo, message, setIsOpen, setOpenedImg 
     <div className='relative w-72 h-96'>
       <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`}
              alt={`${message.content} picture`} fill={true}
+             sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
              onClick={() => {
                setOpenedVideo('');
                setOpenedImg(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${message.content}`);
                setIsOpen(true);
              }} />
+
     </div>
   );
 };

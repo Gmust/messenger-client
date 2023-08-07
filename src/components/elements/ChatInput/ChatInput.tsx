@@ -1,15 +1,15 @@
 'use client';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Paperclip } from 'lucide-react';
 
 import { AudioInput } from '@/components/elements/ChatInput/FileInputs/AudioInput';
+import { FileInput } from '@/components/elements/ChatInput/FileInputs/FileInput';
 import { ImageInput } from '@/components/elements/ChatInput/FileInputs/ImageInput';
 import { TextMessage } from '@/components/elements/ChatInput/FileInputs/TextMessage';
 import { VideoInput } from '@/components/elements/ChatInput/FileInputs/VideoInput';
 import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
-import { FileInput } from '@/components/elements/ChatInput/FileInputs/FileInput';
 
 interface ChatInput {
   chatPartner: User;
@@ -25,9 +25,18 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const [file, setFile] = useState<File | null>(null);
   const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (file) {
+      if (file.type.startsWith('video')) setMessageType('video');
+      if (file.type.startsWith('audio')) setMessageType('audio');
+      if (file.type.startsWith('image')) setMessageType('image');
+      if (file.type.startsWith('application')) setMessageType('file');
+      if (file && messageType === 'text' && file.type!.startsWith('image' || 'audio' || 'video')) setMessageType('file');
+      if (!file) setMessageType('text');
+    }
+  }, [file, messageType]);
+
   const sendMessageWithFile = async () => {
-    console.log(file);
-    console.log('gete');
     if (!file) {
       setMessageType('text');
       if (input) await sendMessage();
@@ -35,6 +44,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     }
     setIsLoading(true);
     try {
+      console.log('send file');
       setMessageType('text');
       const formData = new FormData();
       formData.append('chat', chatId);
@@ -56,6 +66,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   };
 
   const sendMessage = async () => {
+    console.log('send text message');
     if (!input) return;
     setIsLoading(true);
     setMessageType('text');
@@ -81,36 +92,19 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFile(null);
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      if (selectedFile.type.startsWith('video')) {
-        setMessageType('video');
-      }
-      if (selectedFile.type.startsWith('audio')) {
-        setMessageType('audio');
-      }
-      if (selectedFile.type.startsWith('image')) {
-        setMessageType('image');
-      }
-      if (!file?.type.startsWith('audio') || !file?.type.startsWith('video') || !file?.type.startsWith('image') && file) {
-        setMessageType('file');
-      }
-      if (!file) {
-        setMessageType('text');
-        return;
-      }
+      setFile(e.target.files[0]);
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target!.result as string;
         setSelectedDataURL(dataUrl);
       };
-      reader.readAsDataURL(selectedFile);
+      reader.readAsDataURL(e.target.files[0]);
     } else {
       console.log('No files found in the event object.');
     }
   };
+
   return (
     <div className='border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0'>
       <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300
@@ -118,24 +112,22 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
 
         {selectedDataURL ?
           <>
-            {file?.type.startsWith('audio') &&
+            {messageType === 'audio' &&
               <AudioInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                           setFile={setFile} setMessageType={setMessageType} />}
-            {file?.type.startsWith('video') &&
+            {messageType === 'video' &&
               <VideoInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                           setFile={setFile} setMessageType={setMessageType} />}
-            {file?.type.startsWith('image') &&
+            {messageType === 'image' &&
               <ImageInput setMessageType={setMessageType}
                           file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                           setFile={setFile}
               />
             }
-            {!file?.type.startsWith('audio') || !file?.type.startsWith('video') || !file?.type.startsWith('image') && file ?
+            {messageType === 'file' &&
               <FileInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                          setFile={setFile}
                          setMessageType={setMessageType} />
-              :
-              null
             }
           </>
           :
