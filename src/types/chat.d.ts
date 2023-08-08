@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
+import { MessageType } from '@/types/enums';
 
 export interface Chat {
   _id: string,
@@ -10,16 +11,21 @@ export interface Message {
   _id?: string,
   sender: string,
   recipient: string,
-  messageType?: 'text' | 'image' | 'video' | 'audio' | 'geolocation' | 'file'
+  messageType?: MessageType
   content: string,
-  timestamp?: number | Date
-  chat: string
+  timestamp?: number | Date,
+  chat: string,
+  geoLocation?: {
+    type: string,
+    coordinates: [number, number]
+  }
 }
+
 
 export interface FileInputProps {
   selectedDataURL: string,
   file: File | null,
   setFile: Dispatch<SetStateAction<File | null>>
   setSelectedDataURL: Dispatch<SetStateAction<string | null>>
-  setMessageType: Dispatch<SetStateAction<'text' | 'image' | 'video' | 'audio' | 'geolocation' | 'file'>>
+  setMessageType: Dispatch<SetStateAction<MessageType>>
 }

@@ -1,15 +1,18 @@
 'use client';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Paperclip } from 'lucide-react';
+import { Mic, MicOff, Paperclip } from 'lucide-react';
 
 import { AudioInput } from '@/components/elements/ChatInput/FileInputs/AudioInput';
 import { FileInput } from '@/components/elements/ChatInput/FileInputs/FileInput';
 import { ImageInput } from '@/components/elements/ChatInput/FileInputs/ImageInput';
-import { TextMessage } from '@/components/elements/ChatInput/FileInputs/TextMessage';
+import { TextInput } from '@/components/elements/ChatInput/FileInputs/TextInput';
 import { VideoInput } from '@/components/elements/ChatInput/FileInputs/VideoInput';
+import { VoiceInput } from '@/components/elements/ChatInput/FileInputs/VoiceInput';
 import { Button } from '@/components/shared/Button';
 import { chatService } from '@/service/chatService';
+import { MessageType } from '@/types/enums';
+
 
 interface ChatInput {
   chatPartner: User;
@@ -17,35 +20,38 @@ interface ChatInput {
   user: User;
 }
 
+
 export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
-  const [messageType, setMessageType] = useState<'text' | 'image' | 'video' | 'audio' | 'geolocation' | 'file'>('text');
+  const [messageType, setMessageType] = useState<MessageType>(MessageType.Text);
   const [file, setFile] = useState<File | null>(null);
   const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
 
   useEffect(() => {
     if (file) {
-      if (file.type.startsWith('video')) setMessageType('video');
-      if (file.type.startsWith('audio')) setMessageType('audio');
-      if (file.type.startsWith('image')) setMessageType('image');
-      if (file.type.startsWith('application')) setMessageType('file');
-      if (file && messageType === 'text' && file.type!.startsWith('image' || 'audio' || 'video')) setMessageType('file');
-      if (!file) setMessageType('text');
+      if (file.type.startsWith('video')) setMessageType(MessageType.Video);
+      if (file.type.startsWith('audio')) setMessageType(MessageType.Audio);
+      if (file.type.startsWith('image')) setMessageType(MessageType.Image);
+      if (file && messageType === 'text' && file.type!.startsWith('image' || 'audio' || 'video')) setMessageType(MessageType.File);
+      if (file.type.startsWith('application')) setMessageType(MessageType.File);
+      if (messageType === MessageType.Voice) setMessageType(MessageType.Voice);
+      if (!file) setMessageType(MessageType.Text);
     }
+    console.log(messageType);
   }, [file, messageType]);
 
   const sendMessageWithFile = async () => {
     if (!file) {
-      setMessageType('text');
+      setMessageType(MessageType.Text);
       if (input) await sendMessage();
       return;
     }
     setIsLoading(true);
     try {
       console.log('send file');
-      setMessageType('text');
+      setMessageType(MessageType.Text);
       const formData = new FormData();
       formData.append('chat', chatId);
       //@ts-ignore
@@ -55,7 +61,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
       formData.append('messageType', messageType);
       formData.append('file', file!);
       await chatService.sendMessageWithFile(formData, user.access_token, chatId);
-      setMessageType('text');
+      setMessageType(MessageType.Text);
       setFile(null);
       setSelectedDataURL(null);
     } catch (e) {
@@ -69,7 +75,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     console.log('send text message');
     if (!input) return;
     setIsLoading(true);
-    setMessageType('text');
+    setMessageType(MessageType.Text);
     try {
       await chatService.sendMessage(
         {
@@ -131,20 +137,41 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
             }
           </>
           :
-          <TextMessage setInput={setInput} input={input} chatPartner={chatPartner} sendMessage={sendMessage}
-                       textareaRef={textareaRef} />
+          <>
+            {messageType === MessageType.Voice &&
+              <VoiceInput setMessageType={setMessageType} file={file} setFile={setFile} id={user._id} chatId={chatId}
+              />}
+            {messageType === MessageType.Text &&
+              <TextInput setInput={setInput} input={input} chatPartner={chatPartner} sendMessage={sendMessage}
+                         textareaRef={textareaRef} />}
+          </>
         }
         <div className='absolute right-0 bottom-0 flex justify-between items-center py-2 pl-3 pr-2 space-x-3'>
+          <div>
+            <label htmlFor='chat-voice'>
+              {messageType === 'voice'}
+            </label>
+          </div>
           <div>
             <label htmlFor='chat-file'>
               <Paperclip className='cursor-pointer' />
             </label>
             <input type='file' id='chat-file' className='hidden' onChange={handleFileChange} />
           </div>
+          <div>
+            <label>
+              {
+                messageType === 'voice' ?
+                  <MicOff onClick={() => setMessageType(MessageType.Text)} />
+                  :
+                  <Mic onClick={() => setMessageType(MessageType.Voice)} />
+              }
+            </label>
+          </div>
           <div className='flex-shrink-0'>
             <Button onClick={() => {
               messageType === 'text' && sendMessage();
-              (messageType === 'image' || messageType === 'audio' || messageType === 'video' || messageType === 'file')
+              (messageType === 'image' || messageType === 'audio' || messageType === 'video' || messageType === 'file' || messageType === 'voice')
               && sendMessageWithFile();
             }} className='text-lg' isLoading={isLoading}>
               Post
@@ -153,6 +180,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
         </div>
       </div>
     </div>
-  );
+  )
+    ;
 };
 

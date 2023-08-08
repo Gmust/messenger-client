@@ -1,6 +1,7 @@
 import { File, X } from 'lucide-react';
 
 import { FileInputProps } from '@/types/chat';
+import { MessageType } from '@/types/enums';
 
 
 export const FileInput = ({ setMessageType, file, setFile, setSelectedDataURL, selectedDataURL }: FileInputProps) => {
@@ -11,7 +12,7 @@ export const FileInput = ({ setMessageType, file, setFile, setSelectedDataURL, s
         {file?.name}
       </span>
       <X className='text-red-700 cursor-pointer' onClick={() => {
-        setMessageType('text');
+        setMessageType(MessageType.Text);
         if (setFile && setSelectedDataURL) {
           setFile(null);
           setSelectedDataURL(null);

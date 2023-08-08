@@ -16,7 +16,8 @@ export const SearchUsers = () => {
     setLoading(true);
     try {
       const result = await userService.searchUsers(session?.user.access_token!, str, str);
-      setResults(result.fiter((user: User) => user._id !== session?.user.id));
+      if (!result) return;
+      setResults(result.filter((user: User) => user._id !== session?.user.id));
     } catch (e) {
       console.log(e);
     } finally {

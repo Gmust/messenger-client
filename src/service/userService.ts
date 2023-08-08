@@ -87,7 +87,7 @@ export const userService = {
           Authorization: `Bearer ${access_token}`
         }
       });
-      return results.data;
+      return results.data as User[] ;
     } catch (e) {
       console.log(e);
     }

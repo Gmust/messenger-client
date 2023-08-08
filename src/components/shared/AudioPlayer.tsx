@@ -4,6 +4,7 @@ import { saveAs } from 'file-saver';
 import { Download, PauseOctagon, PlaySquare, X } from 'lucide-react';
 
 import { getLastItem } from '@/lib';
+import { MessageType } from '@/types/enums';
 
 
 interface AudioPlayerProps {
@@ -13,7 +14,7 @@ interface AudioPlayerProps {
   setSelectedDataURL?: Dispatch<SetStateAction<string | null>>,
   content?: string,
   type: 'message' | 'input',
-  setMessageType: Dispatch<SetStateAction<'text' | 'image' | 'video' | 'audio' | 'geolocation'>>
+  setMessageType: Dispatch<SetStateAction<MessageType>>
 }
 
 
@@ -44,8 +45,10 @@ export const AudioPlayer = ({
   };
 
   const updateProgress = () => {
-    // @ts-ignore
-    setCurrentTime(playerRef.current.seek());
+    if (playerRef.current) {
+      // @ts-ignore
+      setCurrentTime(playerRef.current.seek());
+    }
     if (playing) {
       requestAnimationFrame(updateProgress);
     }
@@ -65,8 +68,10 @@ export const AudioPlayer = ({
   };
 
   const handleSeek = (e: any) => {
-    // @ts-ignore
-    playerRef.current.seek(e.target.value);
+    if (playerRef.current) {
+      // @ts-ignore
+      playerRef.current.seek(e.target.value);
+    }
     setCurrentTime(e.target.value);
   };
 
@@ -91,7 +96,7 @@ export const AudioPlayer = ({
         ref={playerRef}
       />
       <div className='flex flex-col'>
-        <div className='flex  space-x-4  items-center'>
+        <div className='flex space-x-1 sm:space-x-4  items-center'>
           <div className='h-12 w-12 bg-fuchsia-600 flex justify-center items-center'>
             {
               playing ?
@@ -119,7 +124,7 @@ export const AudioPlayer = ({
                 setCurrentTime(0);
                 setDuration(0);
                 setPlaying(false);
-                setMessageType('text');
+                setMessageType(MessageType.Audio);
                 if (setFile && setSelectedDataURL) {
                   setFile(null);
                   setSelectedDataURL(null);

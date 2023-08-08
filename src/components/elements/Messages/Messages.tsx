@@ -13,6 +13,8 @@ import { Message } from '@/types/chat';
 
 import { AudioMessage } from './MesssagesTypes/AudioMessage';
 import { FileMessage } from '@/components/elements/Messages/MesssagesTypes/FileMessage';
+import { MessageType } from '@/types/enums';
+import { VoiceMessage } from '@/components/elements/Messages/MesssagesTypes/VoiceMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -58,7 +60,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
 
   return (
     <div id='messages'
-         className='flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded
+         className='flex h-full flex-1 flex-col-reverse gap-4 p-1 sm:p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded
                     scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch'>
       <div ref={scrollDownRef}>
         {messages.map((message, index) => {
@@ -94,6 +96,10 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                     }
                     {message.messageType === 'file' &&
                       <FileMessage content={message.content} />
+                    }
+                    {
+                      message.messageType === MessageType.Voice &&
+                      <VoiceMessage content={message.content} />
                     }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>

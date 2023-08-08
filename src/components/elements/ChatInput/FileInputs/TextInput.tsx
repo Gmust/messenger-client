@@ -10,7 +10,7 @@ interface TextMessageProps {
 }
 
 
-export const TextMessage = ({ sendMessage, setInput, input, chatPartner, textareaRef }: TextMessageProps) => {
+export const TextInput = ({ sendMessage, setInput, input, chatPartner, textareaRef }: TextMessageProps) => {
   return (
     <><TextareaAutosize
       //@ts-ignore
