@@ -124,7 +124,7 @@ export const AudioPlayer = ({
                 setCurrentTime(0);
                 setDuration(0);
                 setPlaying(false);
-                setMessageType(MessageType.Audio);
+                setMessageType(MessageType.Text);
                 if (setFile && setSelectedDataURL) {
                   setFile(null);
                   setSelectedDataURL(null);
@@ -138,11 +138,10 @@ export const AudioPlayer = ({
               </span>
               <Download className='w-6 h-6 cursor-pointer'
                         onClick={(e) => {
-                          e.preventDefault();
-                          saveAs(content!, `${getLastItem(content!)}`, { autoBom: true });
+                          console.log(content);
+                          saveAs(`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${content}`!, `${getLastItem(content!)}`);
                         }} />
             </div>
-
           }
         </div>
       </div>

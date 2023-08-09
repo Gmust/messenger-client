@@ -85,7 +85,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           sender: user.id,
           recipient: chatPartner._id,
           content: input,
-          messageType: 'text'
+          messageType: MessageType.Text
         }
       );
       setInput('');
@@ -100,6 +100,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
+      console.log(e.target.files[0])
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target!.result as string;
@@ -139,7 +140,9 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           :
           <>
             {messageType === MessageType.Voice &&
-              <VoiceInput setMessageType={setMessageType} file={file} setFile={setFile} id={user._id} chatId={chatId}
+              <VoiceInput setMessageType={setMessageType} file={file} setFile={setFile}
+                          //@ts-ignore
+                          id={user.id} chatId={chatId}
               />}
             {messageType === MessageType.Text &&
               <TextInput setInput={setInput} input={input} chatPartner={chatPartner} sendMessage={sendMessage}

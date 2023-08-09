@@ -2,6 +2,7 @@ import toast from 'react-hot-toast';
 
 import { $authHost } from '@/service/index';
 import { Chat, Message } from '@/types/chat';
+import { MessageType } from '@/types/enums';
 
 
 export const chatService = {
@@ -34,10 +35,11 @@ export const chatService = {
     }
   },
   async getChatInfo(chatId: string, access_token: string) {
+    console.log(chatId);
     try {
       const res = await $authHost.get<Chat>(`chat/info`, {
         data: {
-          chatId: chatId
+          chatId
         },
         headers: {
           Authorization: `Bearer ${access_token}`
@@ -49,7 +51,7 @@ export const chatService = {
     }
   },
   async sendMessage({
-                      chat, messageType = 'text', sender, content, recipient, access_token
+                      chat, messageType = MessageType.Text, sender, content, recipient, access_token
                     }: Message & { access_token: string }) {
     try {
       const res = await $authHost.post(`/chat/message/${chat}`,

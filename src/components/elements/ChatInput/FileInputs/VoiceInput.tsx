@@ -46,7 +46,6 @@ export const VoiceInput = ({ setFile, file, setMessageType, id, chatId }: VoiceI
 
   const stopRecording = () => {
     setRecordingStatus(RecordingStatus.Inactive);
-    setFile(blobToFile(audioChunks[0], `voice-message-${id}-${Math.random()}-${chatId}`));
     const currentMediaRecorder = mediaRecorder.current;
     if (currentMediaRecorder) {
       currentMediaRecorder.stop();
@@ -54,6 +53,9 @@ export const VoiceInput = ({ setFile, file, setMessageType, id, chatId }: VoiceI
         const audioBlob = new Blob(audioChunks, { type: mimeType });
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudio(audioUrl);
+        const file = new File([audioBlob], `voice-message-${id}-${Math.random()}-${chatId}.webm`);
+        setFile(file);
+        setAudioChunks([]);
       };
     }
   };
