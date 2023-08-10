@@ -1,10 +1,11 @@
 'use client';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Mic, MicOff, Paperclip } from 'lucide-react';
+import { Map, Mic, MicOff, Paperclip } from 'lucide-react';
 
 import { AudioInput } from '@/components/elements/ChatInput/FileInputs/AudioInput';
 import { FileInput } from '@/components/elements/ChatInput/FileInputs/FileInput';
+import { GeoInput } from '@/components/elements/ChatInput/FileInputs/GeoInput';
 import { ImageInput } from '@/components/elements/ChatInput/FileInputs/ImageInput';
 import { TextInput } from '@/components/elements/ChatInput/FileInputs/TextInput';
 import { VideoInput } from '@/components/elements/ChatInput/FileInputs/VideoInput';
@@ -24,10 +25,13 @@ interface ChatInput {
 export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
   const [messageType, setMessageType] = useState<MessageType>(MessageType.Text);
   const [file, setFile] = useState<File | null>(null);
   const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
+  const [markerPosition, setMarkerPosition] = useState<[number, number]>([51.505, -0.09]);
+  const [confirmed, setConfirmed] = useState<boolean>(false);
 
   useEffect(() => {
     if (file) {
@@ -50,7 +54,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     }
     setIsLoading(true);
     try {
-      console.log('send file');
       setMessageType(MessageType.Text);
       const formData = new FormData();
       formData.append('chat', chatId);
@@ -72,10 +75,8 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   };
 
   const sendMessage = async () => {
-    console.log('send text message');
     if (!input) return;
     setIsLoading(true);
-    setMessageType(MessageType.Text);
     try {
       await chatService.sendMessage(
         {
@@ -93,6 +94,36 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     } catch (e) {
       toast.error('Something went wrong, please try again later!');
     } finally {
+      setMessageType(MessageType.Text);
+      setIsLoading(false);
+    }
+  };
+
+  const sendGeolocation = async () => {
+    if (!markerPosition) return;
+    if (!confirmed) return;
+    setIsLoading(true);
+    try {
+      const coordinates = markerPosition.reverse();
+      await chatService.sendMessage(
+        {
+          chat: chatId,
+          access_token: user.access_token,
+          //@ts-ignore
+          sender: user.id,
+          recipient: chatPartner._id,
+          content: `I am sharing my position with you  longitude: ${markerPosition[0]}, latitude: ${markerPosition[1]}`,
+          messageType: MessageType.GeoLocation,
+          geoLocation: { type: 'Point', coordinates }
+        }
+      );
+      setMarkerPosition([51.505, -0.09]);
+      setConfirmed(false);
+      textareaRef.current?.focus();
+    } catch (e) {
+      toast.error('Something went wrong, please try again later!');
+    } finally {
+      setMessageType(MessageType.Text);
       setIsLoading(false);
     }
   };
@@ -100,7 +131,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
-      console.log(e.target.files[0])
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target!.result as string;
@@ -116,7 +146,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     <div className='border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0'>
       <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300
                       focus-within:ring-2 focus:ring-violet-600'>
-
         {selectedDataURL ?
           <>
             {messageType === 'audio' &&
@@ -141,19 +170,25 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           <>
             {messageType === MessageType.Voice &&
               <VoiceInput setMessageType={setMessageType} file={file} setFile={setFile}
-                          //@ts-ignore
+                //@ts-ignore
                           id={user.id} chatId={chatId}
               />}
             {messageType === MessageType.Text &&
               <TextInput setInput={setInput} input={input} chatPartner={chatPartner} sendMessage={sendMessage}
                          textareaRef={textareaRef} />}
+            {messageType === MessageType.GeoLocation &&
+              <GeoInput setIsOpen={setIsOpen} isOpen={isOpen} setMessageType={setMessageType} confirmed={confirmed}
+                        markerPosition={markerPosition} setConfirmed={setConfirmed}
+                        setMarkerPosition={setMarkerPosition}
+              />}
           </>
         }
         <div className='absolute right-0 bottom-0 flex justify-between items-center py-2 pl-3 pr-2 space-x-3'>
           <div>
-            <label htmlFor='chat-voice'>
-              {messageType === 'voice'}
-            </label>
+            <Map onClick={() => {
+              setIsOpen(true);
+              setMessageType(MessageType.GeoLocation);
+            }} />
           </div>
           <div>
             <label htmlFor='chat-file'>
@@ -176,6 +211,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
               messageType === 'text' && sendMessage();
               (messageType === 'image' || messageType === 'audio' || messageType === 'video' || messageType === 'file' || messageType === 'voice')
               && sendMessageWithFile();
+              messageType === MessageType.GeoLocation && sendGeolocation();
             }} className='text-lg' isLoading={isLoading}>
               Post
             </Button>

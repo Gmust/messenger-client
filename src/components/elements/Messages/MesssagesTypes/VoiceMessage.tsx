@@ -1,12 +1,14 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { MessageType } from '@/types/enums';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { AudioVisualizer } from 'react-audio-visualize';
-import useSound from 'use-sound';
 import { Play, StopCircle } from 'lucide-react';
+import useSound from 'use-sound';
 
-export const VoiceMessage = ({ content, setMessageType }: {
+import { MessageType } from '@/types/enums';
+import { cn } from '@/lib';
+
+export const VoiceMessage = ({ content, isCurrentUser }: {
   content: string,
-  setMessageType?: Dispatch<SetStateAction<MessageType>>
+  isCurrentUser: boolean
 }) => {
   const [voiceMessage, setVoiceMessage] = useState<Blob | null>();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -33,7 +35,10 @@ export const VoiceMessage = ({ content, setMessageType }: {
   }, []);
 
   return (
-    <div className='flex items-center bg-violet-500'>
+    <div className={cn('flex items-center', {
+      'bg-violet-500': isCurrentUser,
+      'bg-gray-200': !isCurrentUser
+    })}>
       {
         isPlaying ?
           <StopCircle className='cursor-pointer' onClick={() => {

@@ -1,5 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AudioVisualizer, LiveAudioVisualizer } from 'react-audio-visualize';
+import { Play, StopCircle, X } from 'lucide-react';
+import useSound from 'use-sound';
 
 import { Button } from '@/components/shared/Button';
 import { FileInputProps } from '@/types/chat';
@@ -18,19 +20,22 @@ export const VoiceInput = ({ setFile, file, setMessageType, id, chatId }: VoiceI
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [audio, setAudio] = useState<string | null>(null);
-
-  const blobToFile = (theBlob: Blob, fileName: string): File => {
-    const b: any = theBlob;
-    b.lastModifiedDate = new Date();
-    b.name = fileName;
-    return theBlob as File;
-  };
+  const [mediaRecorderVis, setMediaRecorderVis] = useState<MediaRecorder | null>(null);
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioUrl, setAudioUrl] = useState<string>();
+  const [play, { pause }] = useSound(audioUrl!, {
+    onend: () => {
+      setIsPlaying(false);
+    }
+  });
 
   const startRecording = async () => {
     await getMicrophonePermission();
     if (permission) {
       setRecordingStatus(RecordingStatus.Recording);
       const media = new MediaRecorder(stream!, { mimeType });
+      setMediaRecorderVis(media);
       mediaRecorder.current = media;
       mediaRecorder.current?.start();
       const localAudioChunks: Blob[] = [];
@@ -52,6 +57,7 @@ export const VoiceInput = ({ setFile, file, setMessageType, id, chatId }: VoiceI
       currentMediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunks, { type: mimeType });
         const audioUrl = URL.createObjectURL(audioBlob);
+        setBlob(audioBlob);
         setAudio(audioUrl);
         const file = new File([audioBlob], `voice-message-${id}-${Math.random()}-${chatId}.webm`);
         setFile(file);
@@ -89,6 +95,27 @@ export const VoiceInput = ({ setFile, file, setMessageType, id, chatId }: VoiceI
               setAudio(null);
             }} className='text-red-700 cursor-pointer' />
           </div>
+          // <div className='flex flex-col sm:flex-row space-x-4 sm:items-center'>
+          //   <div className='flex items-center justify-around'>
+          //     {
+          //       !isPlaying ?
+          //         <Play onClick={() => {
+          //           play();
+          //           setIsPlaying(true);
+          //         }} /> :
+          //         <StopCircle onClick={() => {
+          //           pause();
+          //           setIsPlaying(false);
+          //         }} />
+          //     }
+          //     <AudioVisualizer blob={blob!} width={200} height={50} />
+          //   </div>
+          //   <X onClick={() => {
+          //     setAudioChunks([]);
+          //     setAudio(null);
+          //     setBlob(null);
+          //   }} className='text-red-700 cursor-pointer' />
+          // </div>
           :
           <div className='flex'>
             {
@@ -101,11 +128,14 @@ export const VoiceInput = ({ setFile, file, setMessageType, id, chatId }: VoiceI
             }
             {
               recordingStatus === RecordingStatus.Recording &&
-              <Button variant='ghost' type='button'
-                      className='border border-red-500 transition hover:scale-110 hover:bg-red-500'
-                      onClick={stopRecording}>
-                Stop Recording
-              </Button>
+              <div className='flex flex-col sm:flex-row sm:space-x-4'>
+                <Button variant='ghost' type='button'
+                        className='border border-red-500 transition hover:scale-110 hover:bg-red-500'
+                        onClick={stopRecording}>
+                  Stop Recording
+                </Button>
+                <LiveAudioVisualizer mediaRecorder={mediaRecorderVis!} width={200} height={50} />
+              </div>
             }
           </div>
       }

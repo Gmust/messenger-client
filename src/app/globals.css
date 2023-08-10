@@ -1,6 +1,18 @@
 @tailwind base;
 @tailwind components;
+@import url("~leaflet/dist/leaflet.css");
 
+.leaflet-container {
+    height: 400px;
+    width: 800px;
+}
+
+@media screen and (max-width: 500px){
+    .leaflet-container {
+        height: 400px;
+        width: 300px;
+    }
+}
 
 .tooltip {
     @apply invisible absolute;

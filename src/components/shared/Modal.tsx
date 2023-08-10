@@ -1,16 +1,19 @@
 import { Dispatch, Fragment, SetStateAction } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { MessageType } from '@/types/enums';
 
 interface ModalProps {
   isOpen: boolean,
   setIsOpen: Dispatch<SetStateAction<boolean>>,
-  children: React.ReactNode
+  children: React.ReactNode,
+  setMessageType?: Dispatch<SetStateAction<MessageType>>
 }
 
-export default function Modal({ setIsOpen, isOpen, children }: ModalProps) {
+export default function Modal({ setIsOpen, isOpen, children, setMessageType }: ModalProps) {
 
   function closeModal() {
     setIsOpen(false);
+    setMessageType && setMessageType(MessageType.Text);
   }
 
   function openModal() {

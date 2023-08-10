@@ -35,7 +35,6 @@ export const chatService = {
     }
   },
   async getChatInfo(chatId: string, access_token: string) {
-    console.log(chatId);
     try {
       const res = await $authHost.get<Chat>(`chat/info`, {
         data: {
@@ -51,7 +50,7 @@ export const chatService = {
     }
   },
   async sendMessage({
-                      chat, messageType = MessageType.Text, sender, content, recipient, access_token
+                      chat, messageType = MessageType.Text, sender, content, recipient, access_token, geoLocation
                     }: Message & { access_token: string }) {
     try {
       const res = await $authHost.post(`/chat/message/${chat}`,
@@ -59,7 +58,8 @@ export const chatService = {
           sender,
           recipient,
           content,
-          messageType
+          messageType,
+          geoLocation
         },
         {
           headers: {

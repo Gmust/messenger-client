@@ -15,6 +15,7 @@ import { AudioMessage } from './MesssagesTypes/AudioMessage';
 import { FileMessage } from '@/components/elements/Messages/MesssagesTypes/FileMessage';
 import { MessageType } from '@/types/enums';
 import { VoiceMessage } from '@/components/elements/Messages/MesssagesTypes/VoiceMessage';
+import { GeoMessage } from '@/components/elements/Messages/MesssagesTypes/GeoMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -99,7 +100,11 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                     }
                     {
                       message.messageType === MessageType.Voice &&
-                      <VoiceMessage content={message.content} />
+                      <VoiceMessage content={message.content} isCurrentUser={isCurrentUser} />
+                    }
+                    {
+                      message.messageType === MessageType.GeoLocation &&
+                      <GeoMessage content={message.content} coordinates={message.geoLocation?.coordinates!} />
                     }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
@@ -124,7 +129,8 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <div>{openedImg &&
           <>
-            <div className='relative min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] h-full w-full '>
+            <div
+              className='relative h-80 w-80 min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] sm:h-full sm:w-full '>
               <Image src={openedImg} alt={openedImg} fill />
             </div>
             <div className='mt-6'>
