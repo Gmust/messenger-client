@@ -5,12 +5,20 @@ interface TextMessageProps {
   sendMessage: () => void,
   input: string,
   setInput: Dispatch<SetStateAction<string>>,
-  chatPartner: User,
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>
+  chatPartner?: User,
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>,
+  customPlaceholder?: string
 }
 
 
-export const TextInput = ({ sendMessage, setInput, input, chatPartner, textareaRef }: TextMessageProps) => {
+export const TextInput = ({
+                            sendMessage,
+                            setInput,
+                            input,
+                            chatPartner,
+                            textareaRef,
+                            customPlaceholder
+                          }: TextMessageProps) => {
   return (
     <><TextareaAutosize
       //@ts-ignore
@@ -24,7 +32,7 @@ export const TextInput = ({ sendMessage, setInput, input, chatPartner, textareaR
       rows={1}
       value={input}
       onChange={(e) => setInput(e.target.value)}
-      placeholder={`Message ${chatPartner.name}`}
+      placeholder={chatPartner ? `Message ${chatPartner.name}` : customPlaceholder}
       className='block w-full resize-none border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0
                      sm:py-1.5 sm:text-base  leading-6 '
     />

@@ -2,20 +2,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
+import { FileMessage } from '@/components/elements/Messages/MesssagesTypes/FileMessage';
+import { GeoMessage } from '@/components/elements/Messages/MesssagesTypes/GeoMessage';
 import { ImageMessage } from '@/components/elements/Messages/MesssagesTypes/ImageMessage';
 import { VideoMessage } from '@/components/elements/Messages/MesssagesTypes/VideoMessage';
+import { VoiceMessage } from '@/components/elements/Messages/MesssagesTypes/VoiceMessage';
 import { Button } from '@/components/shared/Button';
 import Modal from '@/components/shared/Modal';
 import { cn, createImgUrl, getLastItem, pusherClient, toPusherKey } from '@/lib';
 import { Message } from '@/types/chat';
+import { MessageType } from '@/types/enums';
 
 import { AudioMessage } from './MesssagesTypes/AudioMessage';
-import { FileMessage } from '@/components/elements/Messages/MesssagesTypes/FileMessage';
-import { MessageType } from '@/types/enums';
-import { VoiceMessage } from '@/components/elements/Messages/MesssagesTypes/VoiceMessage';
-import { GeoMessage } from '@/components/elements/Messages/MesssagesTypes/GeoMessage';
 
 interface MessagesProps {
   initialMessages: Message[],
@@ -31,8 +32,13 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openedImg, setOpenedImg] = useState<string>('');
   const [openedVideo, setOpenedVideo] = useState<string>('');
+  const [openedMap, setOpenedMap] = useState<Message | null>(null);
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
 
+  const Map = dynamic(() => import('@/components/shared/Map/Map'), {
+    loading: () => <p>loading...</p>,
+    ssr: false
+  });
 
   const formatTimestamp = (timestamp: number | Date) => {
     const timestampParsed = Date.parse(String(timestamp));
@@ -104,7 +110,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                     }
                     {
                       message.messageType === MessageType.GeoLocation &&
-                      <GeoMessage content={message.content} coordinates={message.geoLocation?.coordinates!} />
+                      <GeoMessage message={message} setOpenedMap={setOpenedMap} setIsOpen={setIsOpen} />
                     }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
@@ -127,7 +133,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
         })}
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div>{openedImg &&
+        <div onClick={e => e.preventDefault()}>{openedImg &&
           <>
             <div
               className='relative h-80 w-80 min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] sm:h-full sm:w-full '>
@@ -155,7 +161,15 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                 }}>Download</Button>
               </div>
             </div>
-          }</div>
+          }
+          {
+            openedMap &&
+            <div className='z-10'>
+              <Map clientGeoData={[openedMap.geoLocation?.coordinates[1]!, openedMap.geoLocation?.coordinates[0]!]!}
+                   type='message' content={openedMap.content} />
+            </div>
+          }
+        </div>
       </Modal>
     </div>
   );

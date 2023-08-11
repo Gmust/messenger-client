@@ -7,6 +7,7 @@ import { Button } from '@/components/shared/Button';
 import 'leaflet-defaulticon-compatibility';
 
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+import toast from 'react-hot-toast';
 
 interface DraggableMarkerProps {
   clientGeoData: [number, number];
@@ -37,6 +38,7 @@ export const DraggableMarker = ({ clientGeoData, setClientGeoData, setIsOpen, se
     setClientGeoData([coords.lat, coords.lng]);
     setConfirmed(true);
     setIsOpen(false);
+    toast('You can leave private message on marker otherwise instead there will be placeholder\n')
   };
 
   return (

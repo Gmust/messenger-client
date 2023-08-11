@@ -17,7 +17,7 @@ export interface Message {
   chat: string,
   geoLocation?: {
     type: string,
-    coordinates: number[]
+    coordinates: [number, number]
   }
 }
 

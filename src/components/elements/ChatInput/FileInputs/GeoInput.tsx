@@ -1,11 +1,13 @@
 'use client';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, RefObject, SetStateAction, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 
+import { Button } from '@/components/shared/Button';
 import Modal from '@/components/shared/Modal';
 import { MessageType } from '@/types/enums';
-import { Button } from '@/components/shared/Button';
-import toast from 'react-hot-toast';
+import { MapIcon } from 'lucide-react';
+import { TextInput } from '@/components/elements/ChatInput/FileInputs/TextInput';
 
 interface GeoInputProps {
   isOpen: boolean,
@@ -15,6 +17,10 @@ interface GeoInputProps {
   setMarkerPosition: Dispatch<SetStateAction<[number, number]>>,
   confirmed: boolean,
   setConfirmed: Dispatch<SetStateAction<boolean>>,
+  setGeoMessageInput: Dispatch<SetStateAction<string>>,
+  geoMessageInput: string,
+  sendMessage: () => void,
+  teatAreaRef: RefObject<HTMLTextAreaElement | null>
 }
 
 export const GeoInput = ({
@@ -24,7 +30,11 @@ export const GeoInput = ({
                            confirmed,
                            setConfirmed,
                            markerPosition,
-                           setMarkerPosition
+                           setMarkerPosition,
+                           geoMessageInput,
+                           setGeoMessageInput,
+                           sendMessage,
+                           teatAreaRef
                          }: GeoInputProps) => {
 
 
@@ -60,8 +70,12 @@ export const GeoInput = ({
           </div>
         </Modal>
       </div>
-      {confirmed && <div className='my-5 mx-2 flex'>
-        I am sharing my position with you longitude: ${markerPosition[1]}, latitude: ${markerPosition[0]}
+      {confirmed && <div className='p-2 flex space-x-4 items-center'>
+        <MapIcon className='text-2xl' />
+        <TextInput input={geoMessageInput} setInput={setGeoMessageInput} sendMessage={sendMessage}
+                   textareaRef={teatAreaRef}
+                   customPlaceholder={`I am sharing my position with you longitude: ${markerPosition[1]}, latitude: ${markerPosition[0]}`}
+        />
       </div>}
     </div>
   );

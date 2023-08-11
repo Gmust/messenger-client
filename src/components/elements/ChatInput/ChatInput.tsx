@@ -32,6 +32,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const [selectedDataURL, setSelectedDataURL] = useState<string | null>(null);
   const [markerPosition, setMarkerPosition] = useState<[number, number]>([51.505, -0.09]);
   const [confirmed, setConfirmed] = useState<boolean>(false);
+  const [geoMessageInput, setGeoMessageInput] = useState<string>('');
 
   useEffect(() => {
     if (file) {
@@ -43,7 +44,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
       if (messageType === MessageType.Voice) setMessageType(MessageType.Voice);
       if (!file) setMessageType(MessageType.Text);
     }
-    console.log(messageType);
   }, [file, messageType]);
 
   const sendMessageWithFile = async () => {
@@ -112,13 +112,14 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           //@ts-ignore
           sender: user.id,
           recipient: chatPartner._id,
-          content: `I am sharing my position with you  longitude: ${markerPosition[0]}, latitude: ${markerPosition[1]}`,
+          content: geoMessageInput ? geoMessageInput : `I am sharing my position with you  longitude: ${markerPosition[0]}, latitude: ${markerPosition[1]}`,
           messageType: MessageType.GeoLocation,
-          geoLocation: { type: 'Point', coordinates }
+          geoLocation: { type: 'Point', coordinates: [coordinates[0], coordinates[1]] }
         }
       );
       setMarkerPosition([51.505, -0.09]);
       setConfirmed(false);
+      setGeoMessageInput('');
       textareaRef.current?.focus();
     } catch (e) {
       toast.error('Something went wrong, please try again later!');
@@ -143,7 +144,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   };
 
   return (
-    <div className='border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0'>
+    <div className='border-t border-gray-200 px-4 pt-4 mb-3 sm:mb-0'>
       <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300
                       focus-within:ring-2 focus:ring-violet-600'>
         {selectedDataURL ?
@@ -179,11 +180,12 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
             {messageType === MessageType.GeoLocation &&
               <GeoInput setIsOpen={setIsOpen} isOpen={isOpen} setMessageType={setMessageType} confirmed={confirmed}
                         markerPosition={markerPosition} setConfirmed={setConfirmed}
-                        setMarkerPosition={setMarkerPosition}
+                        setMarkerPosition={setMarkerPosition} geoMessageInput={geoMessageInput}
+                        setGeoMessageInput={setGeoMessageInput} sendMessage={sendGeolocation} teatAreaRef={textareaRef}
               />}
           </>
         }
-        <div className='absolute right-0 bottom-0 flex justify-between items-center py-2 pl-3 pr-2 space-x-3'>
+        <div className='absolute right-0 bottom-0 flex justify-between items-center py-1 pl-3 pr-2 space-x-3'>
           <div>
             <Map onClick={() => {
               setIsOpen(true);
