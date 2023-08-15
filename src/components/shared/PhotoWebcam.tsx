@@ -26,7 +26,7 @@ export const PhotoWebcam = ({ setFile, setSelectedDataURL, setTakePhoto }: Photo
       u8arr[n] = bstr.charCodeAt(n);
     }
     const blob = new Blob([u8arr], { type: mime });
-    const file = new File([blob], `user-take-photo${Math.random()}`, { type: 'image/webp' });
+    const file = new File([blob], `user-take-photo${Math.random()}.jpeg`, { type: mime });
     setSelectedDataURL(img!);
     setFile(file);
     setTakePhoto(false);
@@ -46,7 +46,7 @@ export const PhotoWebcam = ({ setFile, setSelectedDataURL, setTakePhoto }: Photo
         </div>
         :
         <div className='flex flex-col space-y-6'>
-          <Webcam height={500} width={600} ref={webcamRef} />
+          <Webcam height={500} width={600} ref={webcamRef} screenshotFormat='image/jpeg' />
           <Button onClick={capturePhoto}>Capture photo</Button>
         </div>
       }
