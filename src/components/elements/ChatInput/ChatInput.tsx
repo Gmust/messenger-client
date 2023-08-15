@@ -1,7 +1,7 @@
 'use client';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Map, Mic, MicOff, Paperclip } from 'lucide-react';
+import { ImageIcon, ImageOff, Map, Mic, MicOff, Paperclip } from 'lucide-react';
 
 import { AudioInput } from '@/components/elements/ChatInput/FileInputs/AudioInput';
 import { FileInput } from '@/components/elements/ChatInput/FileInputs/FileInput';
@@ -136,6 +136,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
       reader.onload = (event) => {
         const dataUrl = event.target!.result as string;
         setSelectedDataURL(dataUrl);
+        console.log(selectedDataURL);
       };
       reader.readAsDataURL(e.target.files[0]);
     } else {
@@ -147,7 +148,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
     <div className='border-t border-gray-200 px-4 pt-4 mb-3 sm:mb-0'>
       <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300
                       focus-within:ring-2 focus:ring-violet-600'>
-        {selectedDataURL ?
+        {selectedDataURL && messageType !== MessageType.Text && messageType !== MessageType.Image ?
           <>
             {messageType === 'audio' &&
               <AudioInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
@@ -155,12 +156,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
             {messageType === 'video' &&
               <VideoInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                           setFile={setFile} setMessageType={setMessageType} />}
-            {messageType === 'image' &&
-              <ImageInput setMessageType={setMessageType}
-                          file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
-                          setFile={setFile}
-              />
-            }
             {messageType === 'file' &&
               <FileInput file={file} selectedDataURL={selectedDataURL} setSelectedDataURL={setSelectedDataURL}
                          setFile={setFile}
@@ -183,6 +178,12 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
                         setMarkerPosition={setMarkerPosition} geoMessageInput={geoMessageInput}
                         setGeoMessageInput={setGeoMessageInput} sendMessage={sendGeolocation} teatAreaRef={textareaRef}
               />}
+            {messageType === MessageType.Image &&
+              <ImageInput setMessageType={setMessageType}
+                          file={file} selectedDataURL={selectedDataURL!} setSelectedDataURL={setSelectedDataURL}
+                          setFile={setFile} handleFileChange={handleFileChange}
+              />
+            }
           </>
         }
         <div className='absolute right-0 bottom-0 flex justify-between items-center py-1 pl-3 pr-2 space-x-3'>
@@ -190,7 +191,19 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
             <Map onClick={() => {
               setIsOpen(true);
               setMessageType(MessageType.GeoLocation);
-            }} />
+            }} className='cursor-pointer' />
+          </div>
+          <div>
+            {
+              messageType === MessageType.Image ?
+                <ImageOff className='cursor-pointer' onClick={() => {
+                  setMessageType(MessageType.Text);
+                }} />
+                :
+                <ImageIcon onClick={() => {
+                  setMessageType(MessageType.Image);
+                }} className='cursor-pointer' />
+            }
           </div>
           <div>
             <label htmlFor='chat-file'>
@@ -221,7 +234,6 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
         </div>
       </div>
     </div>
-  )
-    ;
+  ) ;
 };
 
