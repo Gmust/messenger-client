@@ -27,7 +27,7 @@ export const ImageInput = ({
   return (
     <>
       {!selectedDataURL ?
-        <div className='p-2 flex items-center'>
+        <div className='p-2 flex items-center mb-8 sm:mb-0'>
           <Button variant='ghost' className='text-blue-500' onClick={() => setTakePhoto(true)}>
             Take a photo
           </Button> or {' '}
@@ -37,8 +37,8 @@ export const ImageInput = ({
           <input type='file' id='chat-image' className='hidden' onChange={handleFileChange} accept='image/*' />
         </div>
         :
-        <>
-          <div className='relative h-32 w-32'>
+        <div className='mb-10 sm:mb-0'>
+          <div className='relative h-32 w-32 '>
             <Image src={selectedDataURL!} alt={file?.name!} fill={true} />
           </div>
           <div className='flex truncate'>
@@ -50,7 +50,7 @@ export const ImageInput = ({
               setSelectedDataURL(null);
             }} />
           </div>
-        </>
+        </div>
       }
       <Modal isOpen={takePhoto} setIsOpen={setTakePhoto}>
         <div>

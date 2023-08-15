@@ -26,7 +26,7 @@ export const VideoInput = ({
     <>
       {selectedDataURL
         ?
-        <div>
+        <div className='mb-10 sm:mb-0'>
           <video width='420' height='340' className='w-[240px]' autoPlay={false} controls={true}>
             <source src={selectedDataURL} />
           </video>
@@ -42,7 +42,7 @@ export const VideoInput = ({
           </div>
         </div>
         :
-        <div className='p-2 flex items-center'>
+        <div className='p-2 flex items-center mb-8 sm:mb-0'>
           <Button variant='ghost' className='text-blue-500' onClick={() => setFilmVideo(true)}>
             Film video
           </Button> or {' '}

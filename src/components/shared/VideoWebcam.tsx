@@ -9,6 +9,16 @@ interface VideoWebcamProps extends Pick<FileInputProps, 'setFile' | 'setSelected
   setFilmVideo: Dispatch<SetStateAction<boolean>>;
 }
 
+const videoConstraints = {
+  facingMode: 'user'
+};
+
+const audioConstraints = {
+  suppressLocalAudioPlayback: true,
+  noiseSuppression: true,
+  echoCancellation: true
+};
+
 export const VideoWebcam = ({ setFile, setSelectedDataURL, setFilmVideo }: VideoWebcamProps) => {
 
   const webcamRef = React.useRef<Webcam | null>(null);
@@ -47,11 +57,10 @@ export const VideoWebcam = ({ setFile, setSelectedDataURL, setFilmVideo }: Video
       const blob = new Blob(recordedChunks, {
         type: 'video/webm'
       });
-      const file = new File([blob], `user-film-video${Math.random()}`, { type: 'video/mp4' });
+      const file = new File([blob], `user-film-video${Math.random()}.mp4`, { type: 'video/mp4' });
       setFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
-        console.log(event);
         const dataUrl = event.target!.result as string;
         setSelectedDataURL(dataUrl);
       };
@@ -62,7 +71,7 @@ export const VideoWebcam = ({ setFile, setSelectedDataURL, setFilmVideo }: Video
 
   return (
     <div onClick={e => e.preventDefault()} className='space-y-4'>
-      <Webcam audio={true} ref={webcamRef} />
+      <Webcam audio={true} ref={webcamRef} videoConstraints={videoConstraints} audioConstraints={audioConstraints} />
       <div className='flex justify-center space-x-4'>
         {capturing ?
           <Button onClick={handleStopCaptureClick}>Stop Capture</Button>

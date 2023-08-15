@@ -70,7 +70,7 @@ export const GeoInput = ({
           </div>
         </Modal>
       </div>
-      {confirmed && <div className='p-2 flex space-x-4 items-center'>
+      {confirmed && <div className='p-2 flex space-x-4 items-center mb-6 sm:mb-0'>
         <MapIcon className='text-2xl' />
         <TextInput input={geoMessageInput} setInput={setGeoMessageInput} sendMessage={sendMessage}
                    textareaRef={teatAreaRef}

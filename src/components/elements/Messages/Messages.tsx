@@ -132,23 +132,30 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
           );
         })}
       </div>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div onClick={e => e.preventDefault()}>{openedImg &&
-          <>
-            <div
-              className='relative h-80 w-80 min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] sm:h-full sm:w-full '>
-              <Image src={openedImg} alt={openedImg} fill />
-            </div>
-            <div className='mt-6'>
-              <Button onClick={(e) => {
-                e.preventDefault();
-                saveAs(openedImg, `${getLastItem(openedImg)}`);
-              }}>Download</Button>
-            </div>
-          </>
-        }
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} setOpenedImg={setOpenedImg} setOpenedVideo={setOpenedVideo}
+             setOpenedMap={setOpenedMap}>
+        <div onClick={e => {
+          openedVideo && setOpenedVideo('');
+          openedImg && setOpenedImg('');
+          openedMap && setOpenedMap(null);
+          e.preventDefault();
+        }}>
+          {openedImg &&
+            <>
+              <div
+                className='relative h-80 w-80 min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] sm:h-full sm:w-full '>
+                <Image src={openedImg} alt={openedImg} fill />
+              </div>
+              <div className='mt-6'>
+                <Button onClick={(e) => {
+                  e.preventDefault();
+                  saveAs(openedImg, `${getLastItem(openedImg)}`);
+                }}>Download</Button>
+              </div>
+            </>
+          }
           {openedVideo &&
-            <div className='video-wrapper w-96 h-96'>
+            <div className='video-wrapper w-80 h-96'>
               <iframe
                 src={openedVideo}
                 allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'

@@ -13,7 +13,7 @@ interface VideoMessageProps {
 export const VideoMessage = ({setOpenedVideo,message,setIsOpen,setOpenedImg}: VideoMessageProps) => {
   return (
     <div className='relative'>
-      <video width={420} height={384} onPlay={() => {
+      <video width={420}  height={384} onPlay={() => {
       }} autoPlay={false} controls={false}
              onClick={(e) => {
                e.preventDefault();
