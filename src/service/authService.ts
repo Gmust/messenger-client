@@ -2,6 +2,13 @@ import { Account } from 'next-auth';
 
 import { $unAuthHost } from '@/service/index';
 
+
+interface ResetPassword {
+  newPassword: string,
+  confirmPassword: string,
+  token: string
+}
+
 export const authService = {
   async getUserByEmail(email: string) {
     const { data } = await $unAuthHost.get('/auth/user', {
@@ -45,6 +52,24 @@ export const authService = {
         name: user.name,
         password: user.password,
         confirmPassword: user.confirmPassword
+      }
+    );
+    return data;
+  },
+  async forgotPassword(email: string) {
+    const { data } = await $unAuthHost.post('/auth/forgot-password',
+      {
+        email
+      }
+    );
+    return data;
+  },
+  async resetPassword({ newPassword, confirmPassword, token }: ResetPassword) {
+    const { data } = await $unAuthHost.post('/auth/reset',
+      {
+        newPassword,
+        confirmPassword,
+        token
       }
     );
     return data;

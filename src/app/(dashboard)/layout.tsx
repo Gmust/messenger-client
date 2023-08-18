@@ -109,7 +109,7 @@ const Layout = async ({ children }: LayoutProps) => {
 
             <li className='-mx-6 mt-auto flex flex-col '>
 
-              <VolumeHandler/>
+              <VolumeHandler />
 
               <div className='flex items-center'>
                 <div
@@ -121,7 +121,7 @@ const Layout = async ({ children }: LayoutProps) => {
                            alt='Your profile picture' />
                   </Link>
                   <span className='sr-only'>Your profile</span>
-                  <div className='flex flex-col'>
+                  <div className='flex flex-col w-1/2'>
                   <span aria-hidden={true} className='truncate'>
                     {session?.user?.name}
                   </span>
