@@ -11,8 +11,10 @@ import { TextInput } from '@/components/elements/ChatInput/FileInputs/TextInput'
 import { VideoInput } from '@/components/elements/ChatInput/FileInputs/VideoInput';
 import { VoiceInput } from '@/components/elements/ChatInput/FileInputs/VoiceInput';
 import { Button } from '@/components/shared/Button';
+import { useAxiosAuth } from '@/lib/hooks';
 import { chatService } from '@/service/chatService';
 import { MessageType } from '@/types/enums';
+import { User } from '@/types/user';
 
 
 interface ChatInput {
@@ -33,6 +35,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
   const [markerPosition, setMarkerPosition] = useState<[number, number]>([51.505, -0.09]);
   const [confirmed, setConfirmed] = useState<boolean>(false);
   const [geoMessageInput, setGeoMessageInput] = useState<string>('');
+  const axiosAuth = useAxiosAuth();
 
   useEffect(() => {
     if (file) {
@@ -63,7 +66,7 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
       formData.append('content', '');
       formData.append('messageType', messageType);
       formData.append('file', file!);
-      await chatService.sendMessageWithFile(formData, user.access_token, chatId);
+      await chatService.sendMessageWithFile(formData, axiosAuth, chatId);
       setMessageType(MessageType.Text);
       setFile(null);
       setSelectedDataURL(null);
@@ -86,7 +89,8 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           sender: user.id,
           recipient: chatPartner._id,
           content: input,
-          messageType: MessageType.Text
+          messageType: MessageType.Text,
+          axiosInstance: axiosAuth
         }
       );
       setInput('');
@@ -114,7 +118,8 @@ export const ChatInput = ({ chatPartner, chatId, user }: ChatInput) => {
           recipient: chatPartner._id,
           content: geoMessageInput ? geoMessageInput : `I am sharing my position with you  longitude: ${markerPosition[0]}, latitude: ${markerPosition[1]}`,
           messageType: MessageType.GeoLocation,
-          geoLocation: { type: 'Point', coordinates: [coordinates[0], coordinates[1]] }
+          geoLocation: { type: 'Point', coordinates: [coordinates[0], coordinates[1]] },
+          axiosInstance: axiosAuth
         }
       );
       setMarkerPosition([51.505, -0.09]);

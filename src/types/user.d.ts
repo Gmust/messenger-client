@@ -1,3 +1,5 @@
+import { AxiosInstance } from 'axios';
+
 interface ILoginUser {
   email: string,
   password: string
@@ -17,7 +19,6 @@ interface User {
 interface AddFriend {
   userId: string,
   friendEmail: string,
-  access_token: string
 }
 
 interface FriendRequests {
@@ -41,7 +42,7 @@ interface GetFriendRequests {
 interface InteractWithFriendRequest {
   senderId: string,
   receiverId: string,
-  access_token: string
+  axiosInstance: AxiosInstance
 }
 
 interface UserRegistration {
@@ -52,7 +53,7 @@ interface UserRegistration {
 }
 
 interface ChangeDataRequest {
-  access_token:string,
   userId: string,
-  data: string
+  data: string,
+  axiosInstance?: AxiosInstance
 }

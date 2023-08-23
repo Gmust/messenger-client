@@ -8,7 +8,9 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import { createImgUrl, pusherClient, toPusherKey } from '@/lib';
+import { useAxiosAuth } from '@/lib/hooks';
 import { userService } from '@/service/userService';
+import { FriendRequest, FriendRequests, User } from '@/types/user';
 
 
 type FriendRequestCardProps = FriendRequest &
@@ -33,6 +35,7 @@ export const FriendRequestsCard = ({
 
   const { data: session } = useSession();
   const router = useRouter();
+  const axiosAuth = useAxiosAuth();
 
   const acceptFriend = async (senderId: string) => {
     try {
@@ -40,7 +43,7 @@ export const FriendRequestsCard = ({
         {
           receiverId: session!.user.id,
           senderId: _id,
-          access_token: session!.user.access_token
+          axiosInstance: axiosAuth
         }
       );
       if (setIncoming) {
@@ -60,7 +63,7 @@ export const FriendRequestsCard = ({
         {
           receiverId: session!.user.id,
           senderId: _id,
-          access_token: session!.user.access_token
+          axiosInstance: axiosAuth
         }
       );
       if (setOutcoming) {
@@ -80,7 +83,7 @@ export const FriendRequestsCard = ({
         {
           receiverId: session!.user.id,
           senderId: _id,
-          access_token: session!.user.access_token
+          axiosInstance: axiosAuth
         }
       );
       // @ts-ignore
@@ -115,10 +118,10 @@ export const FriendRequestsCard = ({
 
   return (
     <div key={_id} className='flex gap-4 items-center'>
-        <UserPlus className='text-black' />
-       <Image src={createImgUrl(image)} alt='user image' width={30} height={30}
-               className='rounded-md' />
-        <p className='font-medium text-lg'>{email}</p>
+      <UserPlus className='text-black' />
+      <Image src={createImgUrl(image)} alt='user image' width={30} height={30}
+             className='rounded-md' />
+      <p className='font-medium text-lg'>{email}</p>
       {type === 'incoming' &&
         <button className='w-8 h-8 bg-violet-600 hover:bg-violet-700 grid place-items-center rounded-full
                                  transition hover:shadow-md' aria-label='accept friend'

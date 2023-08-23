@@ -46,7 +46,7 @@ const Layout = async ({ children }: LayoutProps) => {
   const { incomingReq } = await userService.getFriendRequests(
     { userId: session!.user.id, access_token: session!.user.access_token }
   );
-  const userChats = await chatService.getAllUserChats(session.user.id, session.user.access_token);
+  const userChats = await chatService.getAllUserChats(session.user.id, undefined, session.user.access_token);
   const imageUrl = createImgUrl(session.user.image!);
 
 
@@ -111,17 +111,18 @@ const Layout = async ({ children }: LayoutProps) => {
 
               <VolumeHandler />
 
-              <div className='flex items-center'>
+              <div className='flex items-center justify-between'>
                 <div
-                  className='flex flex-1 items-center gap-x-4 px-4 py-3 text-base font-semibold leading-6 text-gray-400'>
+                  className='flex items-center text-base font-semibold leading-6 text-gray-400
+                   space-x-4 justify-around p-2'>
                   <Link href={`http://localhost:3000/dashboard/profile/${session.user.id}`} replace={true}
                         className='relative h-8 w-8 bg-gray-50'>
                     <Image fill referrerPolicy='no-referrer' className='rounded-full'
-                           src={imageUrl}
+                           src={imageUrl} sizes=''
                            alt='Your profile picture' />
                   </Link>
                   <span className='sr-only'>Your profile</span>
-                  <div className='flex flex-col w-1/2'>
+                  <div className='flex flex-col w-[180px]'>
                   <span aria-hidden={true} className='truncate'>
                     {session?.user?.name}
                   </span>

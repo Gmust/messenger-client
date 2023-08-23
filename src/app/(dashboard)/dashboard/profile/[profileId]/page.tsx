@@ -24,4 +24,4 @@ const page = async ({ params }: ProfilePageProps) => {
   );
 };
 
-export default page;
+export default page

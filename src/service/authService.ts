@@ -1,6 +1,7 @@
 import { Account } from 'next-auth';
 
 import { $unAuthHost } from '@/service/index';
+import { RefreshJwt } from '@/types/axios';
 
 
 interface ResetPassword {
@@ -44,6 +45,13 @@ export const authService = {
       }
     );
     return data;
+  },
+  async refreshJwt(refresh_token: string, email: string) {
+    const data = await $unAuthHost.post<RefreshJwt>('auth/refresh', {
+      refresh_token,
+      email
+    });
+    return data
   },
   async registerAccount(user: UserRegistration) {
     const { data } = await $unAuthHost.post('/auth/registration',

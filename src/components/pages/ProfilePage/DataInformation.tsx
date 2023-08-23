@@ -15,7 +15,7 @@ export const DataInformation = ({ friends }: { friends: User[] }) => {
       </ul>
       <div>
         <p className='font-bold text-gray-700 text-xl'>10</p>
-        <p className='text-gray-400'>Image</p>
+        <p className='text-gray-400'>Images</p>
       </div>
       <div>
         <p className='font-bold text-gray-700 text-xl'>89</p>

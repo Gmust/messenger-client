@@ -1,14 +1,14 @@
+import { AxiosInstance } from 'axios';
+import { User } from 'next-auth';
+
 import { $authHost } from '@/service/index';
+import { AddFriend, ChangeDataRequest, GetFriendRequests, InteractWithFriendRequest } from '@/types/user';
 
 export const userService = {
-  async addFriend({ userId, friendEmail, access_token }: AddFriend) {
-    const res = await $authHost.post('/users/add', {
+  async addFriend({ userId, friendEmail, axiosInstance }: AddFriend & { axiosInstance: AxiosInstance }) {
+    const res = await axiosInstance.post('/users/add', {
       senderId: userId,
       receiverEmail: friendEmail
-    }, {
-      headers: {
-        Authorization: `Bearer ${access_token}`
-      }
     });
     return res.data;
   },
@@ -34,15 +34,11 @@ export const userService = {
       outComingReq: outComingReq.data
     };
   },
-  async acceptFriendRequest(data: InteractWithFriendRequest) {
-    const res = await $authHost.post('users/accept-friend', {
-      senderId: data.senderId,
-      receiverId: data.receiverId
-    }, {
-      headers: {
-        Authorization: `Bearer ${data.access_token}`
-      }
-    });
+  async acceptFriendRequest({ axiosInstance, receiverId, senderId }: InteractWithFriendRequest) {
+    const res = await axiosInstance.post('users/accept-friend', {
+      senderId: senderId,
+      receiverId: receiverId
+    }, {});
     return res.data;
   },
   async declineFriendRequest(data: InteractWithFriendRequest) {
@@ -50,9 +46,6 @@ export const userService = {
       data: {
         senderId: data.senderId,
         receiverId: data.receiverId
-      },
-      headers: {
-        Authorization: `Bearer ${data.access_token}`
       }
     });
     return res.data;
@@ -62,77 +55,54 @@ export const userService = {
       data: {
         senderId: data.senderId,
         receiverId: data.receiverId
-      },
-      headers: {
-        Authorization: `Bearer ${data.access_token}`
       }
     });
     return res.data;
   },
-  async deleteFromFriends(data: InteractWithFriendRequest) {
-    const res = await $authHost.delete('users/remove', {
+  async deleteFromFriends({ axiosInstance, receiverId, senderId }: InteractWithFriendRequest) {
+    const res = await axiosInstance.delete('users/remove', {
       data: {
-        senderId: data.senderId,
-        receiverId: data.receiverId
-      },
-      headers: {
-        Authorization: `Bearer ${data.access_token}`
+        senderId: senderId,
+        receiverId: receiverId
       }
     });
   },
-  async searchUsers(access_token: string, name: string, email: string) {
+  async searchUsers(axiosInstance: AxiosInstance, name: string, email: string) {
     try {
-      const results = await $authHost.get(`users?name=${name}&email=${email}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      });
-      return results.data as User[] ;
+      const results = await axiosInstance.get(`users?name=${name}&email=${email}`, {});
+      return results.data as User[];
     } catch (e) {
       console.log(e);
     }
   },
-  async changeBio({ userId, data, access_token }: ChangeDataRequest) {
+  async changeBio({ userId, data, axiosInstance }: ChangeDataRequest) {
     try {
-      const results = await $authHost.patch(`users/update-bio`,
+      const results = await axiosInstance!.patch(`users/update-bio`,
         {
           newBio: data,
           userId: userId
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
         });
       return results.data;
     } catch (e) {
       console.log(e);
     }
   },
-  async changeName({ userId, data, access_token }: ChangeDataRequest) {
+  async changeName({ userId, data, axiosInstance }: ChangeDataRequest) {
     try {
-      const results = await $authHost.patch(`users/update-name`,
+      const results = await axiosInstance!.patch(`users/update-name`,
         {
           newName: data,
           userId: userId
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        });
+        }
+      );
       return results.data;
     } catch (e) {
       console.log(e);
     }
   },
-  async changePhoto(formData: FormData, access_token: string) {
+  async changePhoto(formData: FormData, axiosInstance: AxiosInstance) {
     try {
-      const res = await $authHost.patch('users/photo', formData, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      });
+      const res = await axiosInstance.patch('users/photo', formData);
       return res.data;
     } catch (e) {
       console.log(e);

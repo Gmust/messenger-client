@@ -4,19 +4,23 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 import { UserCard } from '@/components/elements/UserCard/UserCard';
+import { useAxiosAuth } from '@/lib/hooks';
 import { userService } from '@/service/userService';
+import { User } from '@/types/user';
 
 export const SearchUsers = () => {
 
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>(false);
   const [results, setResults] = useState<User[]>([]);
+  const axiosAuth = useAxiosAuth();
 
   const handleFindUser = async (str: string) => {
     setLoading(true);
     try {
-      const result = await userService.searchUsers(session?.user.access_token!, str, str);
+      const result = await userService.searchUsers(axiosAuth, str, str);
       if (!result) return;
+      // @ts-ignore
       setResults(result.filter((user: User) => user._id !== session?.user.id));
     } catch (e) {
       console.log(e);
@@ -24,6 +28,7 @@ export const SearchUsers = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className='flex flex-col gap-2'>

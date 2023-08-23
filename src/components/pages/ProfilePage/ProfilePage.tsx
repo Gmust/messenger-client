@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 
 import { ProfileImage } from '@/components/pages/ProfilePage/ProfileImage';
 import { Button } from '@/components/shared/Button';
-import { createImgUrl } from '@/lib';
+import { useAxiosAuth } from '@/lib/hooks';
 import { chatService } from '@/service/chatService';
 import { userService } from '@/service/userService';
 
@@ -17,6 +17,7 @@ import { DataInformation } from './DataInformation';
 import { ProfileBio } from './ProfileBio';
 import { ProfileButtons } from './ProfileButtons';
 import { ProfileName } from './ProfileName';
+import { User } from '@/types/user';
 
 type  ProfilePageProps = Omit<User, 'access_token' | 'refresh_token'>
 
@@ -28,13 +29,14 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
   const [loading, setLoading] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [newBio, setNewBio] = useState<string>(bio);
-  const [newName, setNewName] = useState<string>(name);
+  const [newName, setNewName] = useState<string>(name!);
   const [newImage, setNewImage] = useState<File | null>(null);
+  const axiosAuth = useAxiosAuth();
 
   const handleStartMessaging = async () => {
     setLoading(true);
     try {
-      const chat = await chatService.getChatByParticipants(session?.user.id!, _id, session?.user.access_token!);
+      const chat = await chatService.getChatByParticipants(axiosAuth, session?.user.id!, _id);
       if (!chat) {
         toast.error('Something went wrong!');
         return;
@@ -42,6 +44,7 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
       router.replace(`${url}/dashboard/chat/${chat._id}`);
     } catch (e: any) {
       toast.error(e);
+
     } finally {
       setLoading(false);
     }
@@ -51,9 +54,9 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
     setLoading(true);
     try {
       const response = await userService.deleteFromFriends({
+        axiosInstance: axiosAuth,
         receiverId: _id,
-        senderId: session?.user.id!,
-        access_token: session?.user.access_token!
+        senderId: session?.user.id!
       });
       router.refresh();
     } catch (e) {
@@ -67,9 +70,9 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
     setLoading(true);
     try {
       await userService.addFriend({
-        friendEmail: email,
-        userId: session?.user.id!,
-        access_token: session!.user.access_token
+        axiosInstance: axiosAuth,
+        friendEmail: email!,
+        userId: session?.user.id!
       });
       toast('Friend request sent!');
     } catch (e) {
@@ -86,9 +89,9 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
     setLoading(true);
     try {
       const res = await userService.changeName({
+        axiosInstance: axiosAuth,
         data: newName,
-        userId: session?.user.id!,
-        access_token: session!.user.access_token
+        userId: session?.user.id!
       });
       toast.success('Name has changed!');
       setEdit(false);
@@ -107,9 +110,9 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
     setLoading(true);
     try {
       const res = await userService.changeBio({
+        axiosInstance: axiosAuth,
         data: newBio,
-        userId: session?.user.id!,
-        access_token: session!.user.access_token
+        userId: session?.user.id!
       });
       toast.success('Bio has changed!');
       setEdit(false);
@@ -138,7 +141,7 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
       const formData = new FormData();
       formData.append('email', session?.user.email!);
       formData.append('newPhoto', newImage!);
-      const res = await userService.changePhoto(formData, session?.user.access_token!);
+      const res = await userService.changePhoto(formData, axiosAuth);
       toast.success(res.Msg);
       router.refresh();
       setNewImage(null);
@@ -155,7 +158,7 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
         <div className='grid grid-cols-1 md:grid-cols-3'>
           <DataInformation friends={friends} />
           <div className='flex flex-col'>
-            <ProfileImage image={image} name={newName} edit={edit} />
+            <ProfileImage image={image!} name={newName} edit={edit} />
             {edit ?
               <div className='flex flex-col'>
                 <div className='flex w-full mt-28 items-center justify-center bg-grey-lighter'>

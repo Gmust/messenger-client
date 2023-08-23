@@ -13,14 +13,14 @@ const Dashboard = async () => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
-  const chats = await chatService.getAllUserChats(session.user.id, session.user.access_token);
+  const chats = await chatService.getAllUserChats(session.user.id, undefined, session.user.access_token);
 
 
   return (
     <div className='container py-12'>
       <h1 className='text-5xl font-bold mb-8'>Recent chats</h1>
       {chats?.length! > 0 ? chats?.map(async (chat) => {
-          const chatInfo = await chatService.getChatInfo(chat._id, session.user.access_token);
+          const chatInfo = await chatService.getChatInfo(chat._id, undefined, session.user.access_token);
           const chatPartner = await chatInfo!.participants.filter((user) => {
             return user._id === session.user.id ? null : user;
           }).sort()[0];
