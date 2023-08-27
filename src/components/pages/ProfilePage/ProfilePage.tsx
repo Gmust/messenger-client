@@ -12,20 +12,21 @@ import { Button } from '@/components/shared/Button';
 import { useAxiosAuth } from '@/lib/hooks';
 import { chatService } from '@/service/chatService';
 import { userService } from '@/service/userService';
+import { AllUserFiles, User } from '@/types/user';
 
 import { DataInformation } from './DataInformation';
 import { ProfileBio } from './ProfileBio';
 import { ProfileButtons } from './ProfileButtons';
 import { ProfileName } from './ProfileName';
-import { User } from '@/types/user';
 
-type  ProfilePageProps = Omit<User, 'access_token' | 'refresh_token'>
+type  ProfilePageProps = Omit<User, 'access_token'|'refresh_token'> & {
+  userFiles: AllUserFiles
+}
 
-export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePageProps) => {
+export const ProfilePage = ({ _id, name, friends, image, email, bio, userFiles }: ProfilePageProps) => {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_BASE_URL;
   const { data: session } = useSession();
-
   const [loading, setLoading] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [newBio, setNewBio] = useState<string>(bio);
@@ -152,11 +153,12 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio }: ProfilePa
       setLoading(false);
     }
   };
+
   return (
     <div className='p-16'>
       <div className='p-8 bg-white shadow -mt-8'>
         <div className='grid grid-cols-1 md:grid-cols-3'>
-          <DataInformation friends={friends} />
+          <DataInformation friends={friends} userFiles={userFiles} />
           <div className='flex flex-col'>
             <ProfileImage image={image!} name={newName} edit={edit} />
             {edit ?

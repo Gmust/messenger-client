@@ -2,7 +2,7 @@ import { AxiosInstance } from 'axios';
 import { User } from 'next-auth';
 
 import { $authHost } from '@/service/index';
-import { AddFriend, ChangeDataRequest, GetFriendRequests, InteractWithFriendRequest } from '@/types/user';
+import { AddFriend, AllUserFiles, ChangeDataRequest, GetFriendRequests, InteractWithFriendRequest } from '@/types/user';
 
 export const userService = {
   async addFriend({ userId, friendEmail, axiosInstance }: AddFriend & { axiosInstance: AxiosInstance }) {
@@ -103,6 +103,21 @@ export const userService = {
   async changePhoto(formData: FormData, axiosInstance: AxiosInstance) {
     try {
       const res = await axiosInstance.patch('users/photo', formData);
+      return res.data;
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async getAllUserFiles(userId: string, access_token: string) {
+    try {
+      const res = await $authHost.get<AllUserFiles>('users/all-files', {
+        data: {
+          userId
+        },
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      });
       return res.data;
     } catch (e) {
       console.log(e);

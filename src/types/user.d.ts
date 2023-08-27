@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+import { Message } from '@/types/chat';
 
 interface ILoginUser {
   email: string,
@@ -56,4 +57,9 @@ interface ChangeDataRequest {
   userId: string,
   data: string,
   axiosInstance?: AxiosInstance
+}
+
+interface AllUserFiles {
+  fileMessages: Message[],
+  imageMessages: Message[],
 }
