@@ -1,6 +1,7 @@
 import clsx, { ClassValue } from 'clsx';
 import { Howl } from 'howler';
 import { twMerge } from 'tailwind-merge';
+import { format } from 'date-fns';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -46,3 +47,13 @@ function callNotify(title: any, msg: any, icon: any) {
   new Notification(title, { body: msg, icon: icon });
   sound.play();
 }
+
+export const formatTimestampHM = (timestamp: number | Date) => {
+  const timestampParsed = Date.parse(String(timestamp));
+  return format(timestampParsed, 'HH:mm');
+};
+
+export const formatTimeToDate = (timestamp: number | Date) => {
+  const timestampParsed = Date.parse(String(timestamp));
+  return format(timestampParsed, 'dd-MM-yyyy')
+};

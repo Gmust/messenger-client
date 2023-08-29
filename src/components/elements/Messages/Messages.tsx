@@ -12,7 +12,7 @@ import { VideoMessage } from '@/components/elements/Messages/MesssagesTypes/Vide
 import { VoiceMessage } from '@/components/elements/Messages/MesssagesTypes/VoiceMessage';
 import { Button } from '@/components/shared/Button';
 import Modal from '@/components/shared/Modal';
-import { cn, createImgUrl, getLastItem, pusherClient, toPusherKey } from '@/lib';
+import { cn, createImgUrl, formatTimestampHM, getLastItem, pusherClient, toPusherKey } from '@/lib';
 import { Message } from '@/types/chat';
 import { MessageType } from '@/types/enums';
 
@@ -39,13 +39,6 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
     loading: () => <p>loading...</p>,
     ssr: false
   });
-
-  const formatTimestamp = (timestamp: number | Date) => {
-    const timestampParsed = Date.parse(String(timestamp));
-    return format(timestampParsed, 'HH:mm');
-  };
-
-
   useEffect(() => {
     pusherClient.subscribe(
       toPusherKey(`chat:${chatId}`)
@@ -114,7 +107,7 @@ export const Messages = ({ initialMessages, sessionId, sessionImg, chatPartnerIm
                     }
                     {message.messageType === 'text' && message.content}{' '}
                     <span className='ml-2 text-xs text-gray-400'>
-                      {formatTimestamp(message.timestamp!)}
+                      {formatTimestampHM(message.timestamp!)}
                     </span>
                   </span>
                 </div>
