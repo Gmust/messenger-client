@@ -13,3 +13,8 @@ export enum RecordingStatus {
   Inactive = 'inactive',
   Paused = 'paused'
 }
+
+export enum FileTypes {
+  Zip = 'zip',
+  Pdf = 'pdf'
+}

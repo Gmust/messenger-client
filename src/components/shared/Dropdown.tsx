@@ -5,10 +5,11 @@ import { Menu } from '@headlessui/react';
 interface DropdownListProps {
   children: React.ReactNode;
   title: string,
-  count?: number
+  count?: number,
+  className: string
 }
 
-export const DropdownList = ({ children, count, title }: DropdownListProps) => {
+export const DropdownList = ({ children, count, title,className }: DropdownListProps) => {
   return (
     <Menu>
       <Menu.Button
@@ -17,7 +18,7 @@ export const DropdownList = ({ children, count, title }: DropdownListProps) => {
         <p className='text-gray-400'>{title}</p>
       </Menu.Button>
       <Menu.Items
-        className=' absolute grid grid-cols-3 mt-16 bg-white drop-shadow-lg divide-y max-h-52 overflow-auto scroll-auto'>
+        className={className}>
         {children}
       </Menu.Items>
     </Menu>

@@ -7,6 +7,7 @@ import { ArrowLeft, UploadCloud } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
+import { DataInformation } from '@/components/elements/ProfileData/DataInformation';
 import { ProfileImage } from '@/components/pages/ProfilePage/ProfileImage';
 import { Button } from '@/components/shared/Button';
 import { useAxiosAuth } from '@/lib/hooks';
@@ -14,7 +15,6 @@ import { chatService } from '@/service/chatService';
 import { userService } from '@/service/userService';
 import { AllUserFiles, User } from '@/types/user';
 
-import { DataInformation } from './DataInformation';
 import { ProfileBio } from './ProfileBio';
 import { ProfileButtons } from './ProfileButtons';
 import { ProfileName } from './ProfileName';

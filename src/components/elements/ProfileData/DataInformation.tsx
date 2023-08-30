@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { Menu } from '@headlessui/react';
 import { saveAs } from 'file-saver';
 import Image from 'next/image';
 
+import { FilesList } from '@/components/elements/ProfileData/FilesList';
+import { ImagesList } from '@/components/elements/ProfileData/ImagesList';
 import { UserCard } from '@/components/elements/UserCard/UserCard';
 import { Button } from '@/components/shared/Button';
-import { DropdownList } from '@/components/shared/Dropdown';
-import { ImageMessageCard } from '@/components/shared/ImageMessageCard';
 import Modal from '@/components/shared/Modal';
 import { useAxiosAuth } from '@/lib/hooks';
 import { AllUserFiles, User } from '@/types/user';
@@ -35,41 +34,31 @@ export const DataInformation = ({ friends, userFiles }: { friends: User[], userF
           </ul>
         </>
         <>
-          <DropdownList count={userFiles.imageMessages.length} title='Images'>
-            {userFiles.imageMessages.map((message) =>
-              <Menu.Item key={message._id}>
-                {({ close }) =>
-                  <ImageMessageCard content={message.content} key={message._id}
-                                    timestamp={message.timestamp} close={close}
-                                    loading={loading} setOpenedImg={setOpenedImg} setIsOpen={setIsOpen} />
-                }
-              </Menu.Item>
-            )}
-          </DropdownList>
+          <ImagesList imageMessages={userFiles.imageMessages} loading={loading} setIsOpen={setIsOpen}
+                      setOpenedImg={setOpenedImg} />
         </>
-        <div>
-          <p className='font-bold text-gray-700 text-xl'>89</p>
-          <p className='text-gray-400'>Files</p>
-        </div>
+        <>
+          <FilesList fileMessages={userFiles.fileMessages} loading={loading} />
+        </>
       </>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} setOpenedImg={setOpenedImg}>
         <div onClick={e => {
           e.preventDefault();
           openedImg && setOpenedImg('');
-        }} >
-              <div
-                className='relative h-80 w-80 min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] sm:h-full sm:w-full '>
-                <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${openedImg}`} alt={openedImg} fill />
-              </div>
-              <div className='mt-6 cursor-pointer'>
-                <Button onClick={(e) => {
-                  e.preventDefault();
-                  saveAs(
-                    `${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${openedImg}`,
-                    `openedImg`
-                  );
-                }}>Download</Button>
-              </div>
+        }}>
+          <div
+            className='relative h-80 w-80 min-h-[240px] min-w-[240px] sm:min-w-[384px] sm:min-h-[384px] sm:h-full sm:w-full '>
+            <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${openedImg}`} alt={openedImg} fill />
+          </div>
+          <div className='mt-6 cursor-pointer'>
+            <Button onClick={(e) => {
+              e.preventDefault();
+              saveAs(
+                `${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${openedImg}`,
+                `openedImg`
+              );
+            }}>Download</Button>
+          </div>
         </div>
       </Modal>
     </div>
