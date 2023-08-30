@@ -16,7 +16,7 @@ interface ImagesListProps {
 export const ImagesList = ({ imageMessages, loading, setIsOpen, setOpenedImg }: ImagesListProps) => {
   return (
     <DropdownList count={imageMessages.length} title='Images'
-                  className='absolute grid grid-cols-3 mt-16 bg-white drop-shadow-lg divide-y max-h-52 overflow-auto scroll-auto'>
+                  className='absolute grid grid-cols-3 mt-16 bg-white drop-shadow-lg max-h-52 overflow-auto scroll-auto'>
       {imageMessages.map((message) =>
         <Menu.Item key={message._id}>
           {({ close }) =>

@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { Session } from 'next-auth';
 
 import { Button } from '@/components/shared/Button';
+import { User } from '@/types/user';
 
 interface ProfileButtonsProps {
   session: Session,
@@ -28,7 +29,7 @@ export const ProfileButtons = ({
                                  edit
                                }: ProfileButtonsProps) => {
   return (
-    <div className='space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center'>
+    <div className='space-x-8 flex justify-between mt-6 sm:mt-32 md:mt-0 md:justify-center'>
       {
         session?.user.id === _id ?
           <>

@@ -117,8 +117,8 @@ export const FriendRequestsCard = ({
 
 
   return (
-    <div key={_id} className='flex gap-4 items-center'>
-      <UserPlus className='text-black' />
+    <div key={_id} className='flex sm:gap-4 items-center'>
+      <UserPlus className='text-black hidden sm:flex' />
       <Image src={createImgUrl(image)} alt='user image' width={30} height={30}
              className='rounded-md' />
       <p className='font-medium text-lg'>{email}</p>

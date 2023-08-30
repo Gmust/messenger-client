@@ -155,39 +155,39 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio, userFiles }
   };
 
   return (
-    <div className='p-16'>
+    <div className='sm:p-16'>
       <div className='p-8 bg-white shadow -mt-8'>
-        <div className='grid grid-cols-1 md:grid-cols-3'>
+        <div className='flex flex-col items-center sm:grid sm:grid-cols-1 md:grid-cols-3'>
           <DataInformation friends={friends} userFiles={userFiles} />
           <div className='flex flex-col'>
             <ProfileImage image={image!} name={newName} edit={edit} />
-            {edit ?
-              <div className='flex flex-col'>
-                <div className='flex w-full mt-28 items-center justify-center bg-grey-lighter'>
-                  <label
-                    className='w-64 flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg
-                   tracking-wide uppercase border border-blue cursor-pointer hover:bg-fuchsia-700 hover:text-white'>
-                    <UploadCloud className='h-8 w-8' />
-                    <span className='mt-2 text-base leading-normal'>Change photo</span>
-                    <input type='file' className='hidden' onChange={handleFileChange} accept='image/jpeg, image/png' />
-                  </label>
-                </div>
-                {newImage && <div className='p-2 flex'>
-                  <span>
-                  {newImage.name}
-                  </span>
-                  <Button onClick={handleUploadImage} className='cursor-pointer'>
-                    Send
-                  </Button>
-                </div>}
-              </div>
-              : null}
           </div>
           <ProfileButtons session={session!} _id={_id} loading={loading} friends={friends}
                           handleStartMessaging={handleStartMessaging} setEdit={setEdit} edit={edit}
                           handleAddToFriends={handleAddToFriends} handleRemoveFromFriends={handleRemoveFromFriends} />
         </div>
 
+        {edit ?
+          <div className='flex flex-col'>
+            <div className='flex w-full mt-28 items-center justify-center bg-grey-lighter'>
+              <label
+                className='w-64 flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg
+                   tracking-wide uppercase border border-blue cursor-pointer hover:bg-fuchsia-700 hover:text-white'>
+                <UploadCloud className='h-8 w-8' />
+                <span className='mt-2 text-base leading-normal'>Change photo</span>
+                <input type='file' className='hidden' onChange={handleFileChange} accept='image/jpeg, image/png' />
+              </label>
+            </div>
+            {newImage && <div className='p-2 flex'>
+                  <span>
+                  {newImage.name}
+                  </span>
+              <Button onClick={handleUploadImage} className='cursor-pointer'>
+                Send
+              </Button>
+            </div>}
+          </div>
+          : null}
         <div className='mt-20 text-center border-b pb-12 space-y-4'>
           <ProfileName edit={edit} setEdit={setEdit} newName={newName} setNewName={setNewName}
                        handleChangeName={handleChangeName} />

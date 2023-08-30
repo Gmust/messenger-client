@@ -21,7 +21,7 @@ export const ImageMessageCard = ({ content, timestamp, loading, setIsOpen, setOp
 
   return (
     <>
-      <div className='w-24 h-24 ml-1'>
+      <div className='w-24 h-24 sm:ml-1'>
         <div className='relative w-20 h-20 cursor-pointer' onClick={handleOpenImage}>
           <Image src={`${process.env.NEXT_PUBLIC_BACKEND_CHAT_FILES_URL}${content}`} alt={content} fill />
           <div className='absolute text-fuchsia-800 text-xs'>{formatTimeToDate(timestamp!)}</div>

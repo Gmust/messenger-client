@@ -20,8 +20,11 @@ const page = async ({ params }: ProfilePageProps) => {
   const userFiles = await userService.getAllUserFiles(params.profileId, session.user.access_token);
   return (
     <>
-      <ProfilePage {...user} userFiles={userFiles} />
+      <div className=''>
+        <ProfilePage {...user} userFiles={userFiles} />
+      </div>
     </>
+
   );
 };
 

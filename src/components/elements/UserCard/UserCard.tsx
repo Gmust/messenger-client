@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { createImgUrl } from '@/lib';
+import { User } from '@/types/user';
 
 export const UserCard = ({ _id, image, bio, email, friends, name }: Omit<User, 'refresh_token' | 'access_token'>) => {
   return (

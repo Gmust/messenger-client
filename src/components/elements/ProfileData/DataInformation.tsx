@@ -19,8 +19,8 @@ export const DataInformation = ({ friends, userFiles }: { friends: User[], userF
   const [openedImg, setOpenedImg] = useState<string>('');
 
   return (
-    <div className='grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0'>
-      <>
+    <div className='grid grid-cols-3 text-center order-last md:order-first mt-10 sm:mt-20 md:mt-0'>
+      <div className='flex items-center w-full justify-between mx-auto space-x-10'>
         <>
           <div
             className='peer hover:bg-gray-300 text-white cursor-pointer'>
@@ -40,7 +40,7 @@ export const DataInformation = ({ friends, userFiles }: { friends: User[], userF
         <>
           <FilesList fileMessages={userFiles.fileMessages} loading={loading} />
         </>
-      </>
+      </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} setOpenedImg={setOpenedImg}>
         <div onClick={e => {
           e.preventDefault();

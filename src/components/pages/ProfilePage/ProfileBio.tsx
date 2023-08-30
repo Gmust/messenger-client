@@ -44,7 +44,7 @@ export const ProfileBio = ({ setNewBio, newBio, edit, bio, setEdit, handleChange
                   </span>
             </div>
           </div>
-          : <p className='text-gray-600 text-center font-light lg:px-16'>{newBio}</p>
+          : <p className='text-gray-600 break-words text-center font-light lg:px-16'>{newBio}</p>
       }
     </div>
   );

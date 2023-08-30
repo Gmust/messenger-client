@@ -14,13 +14,15 @@ import { SidebarChatList } from '@/components/elements/SidebarChatList/SidebarCh
 import { SignOutBtn } from '@/components/elements/SignOutBtn/SignOutBtn';
 import { Icon, Icons } from '@/components/icons/icons';
 import { Button, buttonVariants } from '@/components/shared/Button';
+import { Chat } from '@/types/chat';
 
 interface MobileChatLayoutProps {
   friends: string[],
   session: Session,
   sidebarOptions: SidebarOption[],
   unseenRequestCount: number,
-  image: string
+  image: string,
+  chats: Chat[] | undefined
 }
 
 export const MobileChatLayout = ({
@@ -28,7 +30,8 @@ export const MobileChatLayout = ({
                                    friends,
                                    unseenRequestCount,
                                    sidebarOptions,
-                                   image
+                                   image,
+                                   chats
                                  }: MobileChatLayoutProps) => {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -96,13 +99,14 @@ export const MobileChatLayout = ({
                           <ul
                             role='list'
                             className='flex flex-1 flex-col gap-y-7'>
-                   {/*         <li>
-                                           <SidebarChatList
-                                friends={friends}
-                                sessionId={session.user.id}
-                              />
-                            </li>*/}
-
+                            <li>
+                              {
+                                chats &&
+                                <SidebarChatList
+                                  chats={chats!}
+                                  session={session}
+                                />}
+                            </li>
                             <li>
                               <div className='text-xs font-semibold leading-6 text-gray-400'>
                                 Overview
@@ -136,17 +140,20 @@ export const MobileChatLayout = ({
                               </ul>
                             </li>
 
-                            <li className='-ml-6 mt-auto flex items-center'>
+                            <li className='absolute bottom-0 -ml-6 mt-auto flex items-center'>
                               <div
                                 className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900'>
                                 <div className='relative h-8 w-8 bg-gray-50'>
-                                 <Image
-                                    fill
-                                    referrerPolicy='no-referrer'
-                                    className='rounded-full'
-                                    src={image}
-                                    alt='Your profile picture'
-                                  />
+                                  <Link href={`http://localhost:3000/dashboard/profile/${session.user.id}`}
+                                        replace={true}>
+                                    <Image
+                                      fill
+                                      referrerPolicy='no-referrer'
+                                      className='rounded-full'
+                                      src={image}
+                                      alt='Your profile picture'
+                                    />
+                                  </Link>
                                 </div>
 
                                 <span className='sr-only'>Your profile</span>
