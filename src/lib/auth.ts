@@ -6,6 +6,7 @@ import GoogleProvider from 'next-auth/providers/google';
 
 import clientPromise from '@/lib/mongodb';
 import { authService } from '@/service/authService';
+import { User } from '@/types/user';
 
 
 const getGoogleCredentials = () => {

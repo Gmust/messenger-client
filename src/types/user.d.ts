@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+
 import { Message } from '@/types/chat';
 
 interface ILoginUser {

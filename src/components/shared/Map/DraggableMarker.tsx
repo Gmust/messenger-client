@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useMemo, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { Marker, Popup } from 'react-leaflet';
 import { Check } from 'lucide-react';
 
@@ -7,7 +8,6 @@ import { Button } from '@/components/shared/Button';
 import 'leaflet-defaulticon-compatibility';
 
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
-import toast from 'react-hot-toast';
 
 interface DraggableMarkerProps {
   clientGeoData: [number, number];

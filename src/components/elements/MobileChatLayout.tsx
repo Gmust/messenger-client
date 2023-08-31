@@ -12,6 +12,7 @@ import { SidebarOption } from '@/app/(dashboard)/layout';
 import { FriendRequestsSidebarOption } from '@/components/elements/FriendRequestsSidebar/FriendRequestsSidebarOption';
 import { SidebarChatList } from '@/components/elements/SidebarChatList/SidebarChatList';
 import { SignOutBtn } from '@/components/elements/SignOutBtn/SignOutBtn';
+import { VolumeHandler } from '@/components/elements/VolumeHandler/VolumeHandler';
 import { Icon, Icons } from '@/components/icons/icons';
 import { Button, buttonVariants } from '@/components/shared/Button';
 import { Chat } from '@/types/chat';
@@ -87,8 +88,6 @@ export const MobileChatLayout = ({
                         </div>
                       </div>
                       <div className='relative mt-6 flex-1 px-4 sm:px-6'>
-                        Content
-
                         {friends.length > 0 ? (
                           <div className='text-xs font-semibold leading-6 text-gray-400'>
                             Your chats
@@ -140,7 +139,8 @@ export const MobileChatLayout = ({
                               </ul>
                             </li>
 
-                            <li className='absolute bottom-0 -ml-6 mt-auto flex items-center'>
+                            <li className='absolute bottom-0 -ml-6 mt-auto flex flex-col'>
+                              <VolumeHandler/>
                               <div
                                 className='flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900'>
                                 <div className='relative h-8 w-8 bg-gray-50'>
@@ -167,9 +167,9 @@ export const MobileChatLayout = ({
                                     {session.user.email}
                                   </span>
                                 </div>
+                                <SignOutBtn className='h-full aspect-square' />
                               </div>
 
-                              <SignOutBtn className='h-full aspect-square' />
                             </li>
                           </ul>
                         </nav>

@@ -1,8 +1,9 @@
-import { Message } from '@/types/chat';
 import { ForwardRefExoticComponent } from 'react';
-import { LucideProps } from 'lucide-react';
-import { formatTimeToDate } from '@/lib';
 import { saveAs } from 'file-saver';
+import { LucideProps } from 'lucide-react';
+
+import { formatTimeToDate } from '@/lib';
+import { Message } from '@/types/chat';
 
 type FileMessageCardProps = Pick<Message, 'content' | 'timestamp'> & {
   Icon: ForwardRefExoticComponent<LucideProps>

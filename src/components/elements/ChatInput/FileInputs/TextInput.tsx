@@ -1,6 +1,8 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
+import { User } from '@/types/user';
+
 interface TextMessageProps {
   sendMessage: () => void,
   input: string,

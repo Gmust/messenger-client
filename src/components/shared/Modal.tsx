@@ -1,7 +1,8 @@
 import { Dispatch, Fragment, SetStateAction } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { MessageType } from '@/types/enums';
+
 import { Message } from '@/types/chat';
+import { MessageType } from '@/types/enums';
 
 interface ModalProps {
   isOpen: boolean,

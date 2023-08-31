@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { ForgotPassword } from '@/components/elements/ForgotPassword';
 
 export default function page({

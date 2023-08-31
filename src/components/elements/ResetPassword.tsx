@@ -2,15 +2,15 @@
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/shared/Button';
 import { resetPasswordValidator } from '@/lib/validations/reset-password';
 import { authService } from '@/service/authService';
-import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
 
 interface ResetPasswordInputs {
   password: string,

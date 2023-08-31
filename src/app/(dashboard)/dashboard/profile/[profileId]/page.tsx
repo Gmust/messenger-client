@@ -21,7 +21,7 @@ const page = async ({ params }: ProfilePageProps) => {
   return (
     <>
       <div className=''>
-        <ProfilePage {...user} userFiles={userFiles} />
+        <ProfilePage {...user} userFiles={userFiles!} />
       </div>
     </>
 

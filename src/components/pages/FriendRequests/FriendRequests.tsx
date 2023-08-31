@@ -5,8 +5,9 @@ import { useSession } from 'next-auth/react';
 
 import { FriendRequestsCard } from '@/components/elements';
 import { createImgUrl, notifyMe, pusherClient, toPusherKey } from '@/lib';
+import { FriendRequests } from '@/types/user';
 
-export const FriendRequests = (
+export const FriendRequestsPage = (
   { incomingFriendRequests, outComingFriendsRequests }: {
     incomingFriendRequests: FriendRequests[],
     outComingFriendsRequests: FriendRequests[]

@@ -1,13 +1,13 @@
 'use client';
 import { Dispatch, RefObject, SetStateAction, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { MapIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
+import { TextInput } from '@/components/elements/ChatInput/FileInputs/TextInput';
 import { Button } from '@/components/shared/Button';
 import Modal from '@/components/shared/Modal';
 import { MessageType } from '@/types/enums';
-import { MapIcon } from 'lucide-react';
-import { TextInput } from '@/components/elements/ChatInput/FileInputs/TextInput';
 
 interface GeoInputProps {
   isOpen: boolean,

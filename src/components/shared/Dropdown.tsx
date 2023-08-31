@@ -14,7 +14,7 @@ export const DropdownList = ({ children, count, title,className }: DropdownListP
     <Menu>
       <Menu.Button
         className='hover:bg-gray-300 text-white cursor-pointer'>
-        {count && <p className='font-bold text-gray-700 text-xl'>{count}</p>}
+        {count  ? <p className='font-bold text-gray-700 text-xl'>{count}</p> : <p className='font-bold text-gray-700 text-xl'>0</p>}
         <p className='text-gray-400'>{title}</p>
       </Menu.Button>
       <Menu.Items

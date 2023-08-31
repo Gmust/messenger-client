@@ -158,7 +158,7 @@ export const ProfilePage = ({ _id, name, friends, image, email, bio, userFiles }
     <div className='sm:p-16'>
       <div className='p-8 bg-white shadow -mt-8'>
         <div className='flex flex-col items-center sm:grid sm:grid-cols-1 md:grid-cols-3'>
-          <DataInformation friends={friends} userFiles={userFiles} />
+          { session?.user.id === _id ? <DataInformation friends={friends} userFiles={userFiles} />  : null }
           <div className='flex flex-col'>
             <ProfileImage image={image!} name={newName} edit={edit} />
           </div>

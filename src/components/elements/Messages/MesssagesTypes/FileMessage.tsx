@@ -1,7 +1,8 @@
-import { Download, File } from 'lucide-react';
-import { saveAs } from 'file-saver';
-import { getLastItem } from '@/lib';
 import React from 'react';
+import { saveAs } from 'file-saver';
+import { Download, File } from 'lucide-react';
+
+import { getLastItem } from '@/lib';
 
 export const FileMessage = ({ content }: { content: string }) => {
   return (

@@ -1,11 +1,11 @@
 import { Menu } from '@headlessui/react';
+import { LucideProps } from 'lucide-react';
 
+import { FileIcons } from '@/components/icons/icons';
 import { DropdownList } from '@/components/shared/Dropdown';
+import { FileMessageCard } from '@/components/shared/FileMessageCard';
 import { Message } from '@/types/chat';
 import { FileTypes } from '@/types/enums';
-import { FileIcons } from '@/components/icons/icons';
-import { LucideProps } from 'lucide-react';
-import { FileMessageCard } from '@/components/shared/FileMessageCard';
 
 
 interface FilesListProps {

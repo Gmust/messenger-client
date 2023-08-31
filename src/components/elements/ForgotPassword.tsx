@@ -5,13 +5,13 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
+import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/shared/Button';
 import { forgotPassword } from '@/lib/validations/forgot-password';
 import { authService } from '@/service/authService';
-import { ArrowLeft } from 'lucide-react';
 
 interface ForgotPasswordInput {
   email: string;

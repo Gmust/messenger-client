@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 
-import { FriendRequests } from '@/components/pages/FriendRequests/FriendRequests';
+import { FriendRequestsPage } from '@/components/pages/FriendRequests/FriendRequests';
 import { authOptions } from '@/lib/auth';
 import { userService } from '@/service/userService';
 
@@ -17,7 +17,7 @@ const page = async () => {
   return (
     <section>
       <h1 className='text-4xl font-bold mb-8'>Incoming/Out-coming friend requests</h1>
-      <FriendRequests incomingFriendRequests={incomingReq} outComingFriendsRequests={outComingReq} />
+      <FriendRequestsPage incomingFriendRequests={incomingReq} outComingFriendsRequests={outComingReq} />
     </section>
   );
 

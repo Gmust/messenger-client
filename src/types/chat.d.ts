@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
+
 import { MessageType } from '@/types/enums';
 
 export interface Chat {

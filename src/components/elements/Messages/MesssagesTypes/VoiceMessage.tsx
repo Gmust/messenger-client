@@ -3,8 +3,8 @@ import { AudioVisualizer } from 'react-audio-visualize';
 import { Play, StopCircle } from 'lucide-react';
 import useSound from 'use-sound';
 
-import { MessageType } from '@/types/enums';
 import { cn } from '@/lib';
+import { MessageType } from '@/types/enums';
 
 export const VoiceMessage = ({ content, isCurrentUser }: {
   content: string,

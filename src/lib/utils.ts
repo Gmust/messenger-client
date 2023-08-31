@@ -1,7 +1,7 @@
 import clsx, { ClassValue } from 'clsx';
+import { format } from 'date-fns';
 import { Howl } from 'howler';
 import { twMerge } from 'tailwind-merge';
-import { format } from 'date-fns';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
